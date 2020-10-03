@@ -4,7 +4,9 @@ import { attributeManager } from './attributeManager';
 import { authenticationManager } from './authenticationManager';
 import { Register } from './components/pages/Register';
 import { SignIn } from './components/pages/SignIn';
+import { User } from './components/User';
 import { Users } from './components/Users'
+import { NavBar } from "./components/NavBar";
 
 export const App = () => {
   const [isInitialized, setIsInitialized] = React.useState<boolean>(false);
@@ -25,8 +27,10 @@ export const App = () => {
   }
   return (
     <BrowserRouter>
+      <NavBar />
       <Route path="/login" component={SignIn} />
       <Route path="/register" component={Register} />
+      <Route path="/user/:username" component={User} />
       <AuthenticatedRouter path="/home" component={DummyHomePage} />
       <AuthenticatedRouter path="/users" component={Users} />
     </BrowserRouter>
