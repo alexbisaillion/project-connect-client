@@ -7,6 +7,18 @@ import { SignIn } from './components/pages/SignIn';
 import { User } from './components/User';
 import { Users } from './components/Users'
 import { NavBar } from "./components/NavBar";
+import { createMuiTheme, MuiThemeProvider } from '@material-ui/core';
+import { teal } from '@material-ui/core/colors';
+
+const theme = createMuiTheme({
+  palette: {
+    type: 'dark',
+    primary: teal
+  },
+  props: {
+    MuiInput: { inputProps: { spellCheck: 'false' } }
+  }
+});
 
 export const App = () => {
   const [isInitialized, setIsInitialized] = React.useState<boolean>(false);
@@ -22,18 +34,26 @@ export const App = () => {
     }
   });
 
-  if (!isInitialized) {
-    return <div>Loading</div>
-  }
+  const getContent = () => {
+    if (!isInitialized) {
+      return <div>Loading</div>;
+    }
+    return (
+      <BrowserRouter>
+        <Route path="/login" component={SignIn} />
+        <Route path="/register" component={Register} />
+        <Route path="/user/:username" component={User} />
+        <AuthenticatedRouter path="/home" component={DummyHomePage} />
+        <AuthenticatedRouter path="/users" component={Users} />
+      </BrowserRouter>
+    );
+  };
+
   return (
-    <BrowserRouter>
+    <MuiThemeProvider theme={theme}>
       <NavBar />
-      <Route path="/login" component={SignIn} />
-      <Route path="/register" component={Register} />
-      <Route path="/user/:username" component={User} />
-      <AuthenticatedRouter path="/home" component={DummyHomePage} />
-      <AuthenticatedRouter path="/users" component={Users} />
-    </BrowserRouter>
+      {getContent()}
+    </MuiThemeProvider>
   );
 }
 
