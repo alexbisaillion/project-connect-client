@@ -1,8 +1,9 @@
 import React from "react";
 import styled from "styled-components";
-import { Button, Container, CssBaseline, TextField, Typography } from "@material-ui/core";
+import { Button, TextField, Typography } from "@material-ui/core";
 import { Link, Redirect } from "react-router-dom";
 import { authenticationManager } from "../../authenticationManager";
+import { PageContainer } from "../commonComponents";
 
 const SignInContainer = styled.div`
   display: flex;
@@ -24,11 +25,10 @@ export const SignIn = () => {
   };
 
   if (successfulLogin) {
-    return <Redirect to="/users" />
+    return <Redirect to={`/user/${username}`} />
   } else {
     return (
-      <Container component="main" maxWidth="xs">
-        <CssBaseline />
+      <PageContainer>
         <SignInContainer>
           <Typography component="h1" variant="h5">Sign in</Typography>
           <TextField fullWidth variant="outlined" label="Username" name="username" autoFocus onChange={(e => setUsername(e.target.value))}/>
@@ -36,7 +36,7 @@ export const SignIn = () => {
           <Button fullWidth variant="contained" color="primary" type="submit" onClick={() => attemptLogin()}>Sign in</Button>
           <Link to="/register">Don't have an account? Register here.</Link>
         </SignInContainer>
-      </Container>
+      </PageContainer>
     );
   }
 }

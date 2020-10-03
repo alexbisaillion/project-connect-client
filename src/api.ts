@@ -12,6 +12,15 @@ export const getUsers = async (): Promise<AxiosResponse<IUser[]>> => {
   }
 }
 
+export const getUser = async (username: string): Promise<AxiosResponse<IUser>> => {
+  try {
+    const user: AxiosResponse<IUser> = await axios.get(baseUrl + "/user/" + username);
+    return user;
+  } catch (error) {
+    throw new Error(error);
+  }
+}
+
 export const isLoggedIn = async (): Promise<AxiosResponse<IIsLoggedIn>> => {
   try {
     const isLoggedIn: AxiosResponse<IIsLoggedIn> = await axios.get(baseUrl + "/isLoggedIn");
