@@ -88,3 +88,12 @@ export const register = async (info: RegistrationInfo): Promise<AxiosResponse<Su
     throw new Error(error);
   }
 }
+
+export const getProject = async (name: string): Promise<AxiosResponse<IProject>> => {
+  try {
+    const project: AxiosResponse<IProject> = await axios.get(baseUrl + "/project/" + name);
+    return project;
+  } catch (error) {
+    throw new Error(error);
+  }
+}

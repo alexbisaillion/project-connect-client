@@ -1,7 +1,6 @@
 interface IUser {
   _id: string
   name: string
-  address: string
   projects: string[],
   invitations: string[],
   username: string;
@@ -11,9 +10,23 @@ interface IUser {
   pastEmployment: Employment[];
   education: string;
   industry: string;
+  skills: Skill[];
+  programmingLanguages: Skill[];
+  frameworks: Skill[];
+  __v: number
+}
+
+interface IProject {
+  _id: string
+  name: string;
+  users: string[];
+  invitees: string[];
   skills: string[];
   programmingLanguages: string[];
   frameworks: string[];
+  startDate: Date;
+  isInProgress: boolean;
+  completionDate?: Date;
   __v: number
 }
 
@@ -33,4 +46,10 @@ type Employment = {
 
 type SuccessResponse = {
   success: boolean;
+}
+
+type Skill = {
+  _id: string;
+  name: string;
+  votes: number;
 }
