@@ -2,7 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import { getUser } from "../api";
 import { RouteComponentProps } from 'react-router-dom'
-import { PageHeader, Attribute, PageContainer } from "./commonComponents";
+import { PageHeader, Attribute, PageContainer, LoadingIndicator } from "./commonComponents";
 
 const UserContainer = styled.div`
   display: flex;
@@ -30,17 +30,22 @@ export const User = (props: ComponentProps) => {
     fetchUser();
   }, [username]);
 
-  if (!loadedUser) {
-    return <div>Loading</div>
-  } else {
+  const getContent = () => {
+    if (!loadedUser) {
+      return <LoadingIndicator />
+    }
     return (
-      <PageContainer>
-        <UserContainer>
-          <PageHeader textContent={loadedUser.name} />
-          <Attribute textContent={loadedUser.currentEmployment.position} />
-          <Attribute textContent={loadedUser.region} />
-        </UserContainer>
-      </PageContainer>
+      <UserContainer>
+        <PageHeader textContent={loadedUser.name} />
+        <Attribute textContent={loadedUser.currentEmployment.position} />
+        <Attribute textContent={loadedUser.region} />
+      </UserContainer>
     );
   }
+
+  return (
+    <PageContainer>
+      {getContent()}
+    </PageContainer>
+  );
 };

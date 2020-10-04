@@ -9,6 +9,7 @@ import { Users } from './components/Users'
 import { NavBar } from "./components/NavBar";
 import { createMuiTheme, MuiThemeProvider } from '@material-ui/core';
 import { teal } from '@material-ui/core/colors';
+import { LoadingIndicator } from './components/commonComponents';
 
 const theme = createMuiTheme({
   palette: {
@@ -36,7 +37,7 @@ export const App = () => {
 
   const getContent = () => {
     if (!isInitialized) {
-      return <div>Loading</div>;
+      return <LoadingIndicator />
     }
     return (
       <BrowserRouter>

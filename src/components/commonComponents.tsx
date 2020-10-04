@@ -1,5 +1,6 @@
 import React from "react";
-import { Container, CssBaseline, Typography } from "@material-ui/core";
+import styled from "styled-components";
+import { CircularProgress, Container, CssBaseline, LinearProgress, Typography } from "@material-ui/core";
 
 type PageContainerProps = {
   children: React.ReactNode;
@@ -10,6 +11,21 @@ export const PageContainer = (props: PageContainerProps) => {
       <CssBaseline />
       {props.children}
     </Container>
+  );
+}
+
+const LoadingIndicatorContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 48px);
+  justify-content: center;
+  align-items: center;
+`;
+export const LoadingIndicator = () => {
+  return (
+    <LoadingIndicatorContainer>
+      <CircularProgress size={100}/>
+    </LoadingIndicatorContainer>
   );
 }
 

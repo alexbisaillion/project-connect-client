@@ -21,9 +21,7 @@ class AuthenticationManager {
   async attemptLogIn(username: string, password: string) {
     const result = await login(username, password);
     if (result.data.success) {
-      console.log("updating isLoggedIn");
       this.isLoggedIn = true;
-      console.log("updating isLoggedIn");
     }
   }
 }
