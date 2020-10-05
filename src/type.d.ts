@@ -32,6 +32,7 @@ interface IProject {
 
 interface IIsLoggedIn {
   isLoggedIn: boolean;
+  username: string;
 }
 
 interface ILogin {

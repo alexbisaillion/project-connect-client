@@ -250,7 +250,6 @@ export const Register = () => {
       programmingLanguages: selectedProgrammingLanguages,
       frameworks: selectedFrameworks
     });
-    console.log(result);
   }
 
   return (

@@ -1,4 +1,5 @@
 import axios, { AxiosResponse } from "axios"
+import { authenticationManager } from "./authenticationManager";
 axios.defaults.withCredentials = true;
 
 const baseUrl: string = process.env.REACT_APP_BASE_URL || "http://localhost:4000"
@@ -93,6 +94,22 @@ export const getProject = async (name: string): Promise<AxiosResponse<IProject>>
   try {
     const project: AxiosResponse<IProject> = await axios.get(baseUrl + "/project/" + name);
     return project;
+  } catch (error) {
+    throw new Error(error);
+  }
+}
+
+export type ProjectInfo = {
+  name: string;
+  skills: string[];
+  programmingLanguages: string[];
+  frameworks: string[];
+}
+export const addProject = async (info: ProjectInfo): Promise<AxiosResponse<SuccessResponse>> => {
+  try {
+    const creator = authenticationManager.getLoggedInUser();
+    const result: AxiosResponse<SuccessResponse> = await axios.post(baseUrl + "/addProject", { ...info, creator });
+    return result;
   } catch (error) {
     throw new Error(error);
   }

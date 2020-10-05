@@ -1,6 +1,7 @@
 import React from "react";
 import styled from "styled-components";
-import { Avatar, Chip, CircularProgress, Container, CssBaseline, List, ListItem, ListItemAvatar, ListItemText, Paper, Typography } from "@material-ui/core";
+import { Avatar, Button, Chip, CircularProgress, Container, CssBaseline, List, ListItem, ListItemAvatar, ListItemText, Paper, TextField, Typography } from "@material-ui/core";
+import Autocomplete from "@material-ui/lab/Autocomplete";
 
 type PageContainerProps = {
   children: React.ReactNode;
@@ -121,6 +122,7 @@ export const WeightedSkillList = (props: WeightedSkillListProps) => {
 }
 type SkillListProps = {
   skills: string[];
+  onDelete?: (value: string) => void;
 }
 export const SkillList = (props: SkillListProps) => {
   return (
@@ -130,10 +132,66 @@ export const SkillList = (props: SkillListProps) => {
           <Chip
             key={skill}
             label={skill}
+            onDelete={props.onDelete ? () => props.onDelete && props.onDelete(skill) : undefined}
             color="primary"
           />
         )
       })}
     </SkillBox>
+  )
+}
+
+type AttributeDropdownProps = {
+  name: string;
+  options: string[];
+  onChange: (newValue: string) => void;
+}
+export const AttributeDropdown = (props: AttributeDropdownProps) => {
+  return (
+    <Autocomplete
+      fullWidth
+      options={props.options}
+      onChange={(_event, option: string | null) => {
+        if (option) {
+          props.onChange(option);
+        }
+      }}
+      renderInput={(params) => <TextField {...params} label={props.name} variant="outlined" />}
+    />
+  )
+}
+
+type TextControlProps = {
+  name: string;
+  value: string;
+  onChange: (newValue: string) => void;
+}
+export const TextControl = (props: TextControlProps) => {
+  return (
+    <TextField
+      fullWidth
+      variant="outlined"
+      label={props.name}
+      value={props.value}
+      onChange={(e) => props.onChange(e.target.value)}
+      error={props.value.length <= 0}
+    />
+  )
+}
+
+type ApplyButtonProps = {
+  name: string;
+  onApply: () => void;
+}
+export const ApplyButton = (props: ApplyButtonProps) => {
+  return (
+    <Button
+      fullWidth
+      variant="contained"
+      color="primary"
+      onClick={props.onApply}
+    >
+      {props.name}
+    </Button>
   )
 }
