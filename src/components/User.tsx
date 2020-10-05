@@ -2,7 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import { getProject, getUser } from "../api";
 import { RouteComponentProps } from 'react-router-dom'
-import { PageHeader, Attribute, PageContainer, LoadingIndicator, Panel, AttributeList, SkillList } from "./commonComponents";
+import { PageHeader, Attribute, PageContainer, LoadingIndicator, Panel, AttributeList, WeightedSkillList } from "./commonComponents";
 
 const UserContainer = styled.div`
   display: flex;
@@ -68,13 +68,13 @@ export const User = (props: ComponentProps) => {
         <Panel>
           <AttributeList title="Skills">
             <AttributeList title="Basic" dense={true}>
-              <SkillList skills={loadedUser.skills} />
+              <WeightedSkillList skills={loadedUser.skills} />
             </AttributeList>
             <AttributeList title="Programming Languages" dense={true}>
-              <SkillList skills={loadedUser.programmingLanguages} />
+              <WeightedSkillList skills={loadedUser.programmingLanguages} />
             </AttributeList>
             <AttributeList title="Frameworks" dense={true}>
-              <SkillList skills={loadedUser.frameworks} />
+              <WeightedSkillList skills={loadedUser.frameworks} />
             </AttributeList>
           </AttributeList>
         </Panel>

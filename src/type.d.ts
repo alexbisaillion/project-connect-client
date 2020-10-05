@@ -24,9 +24,9 @@ interface IProject {
   skills: string[];
   programmingLanguages: string[];
   frameworks: string[];
-  startDate: Date;
+  startDate: string;
   isInProgress: boolean;
-  completionDate?: Date;
+  completionDate?: string;
   __v: number
 }
 

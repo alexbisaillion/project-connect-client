@@ -1,13 +1,13 @@
 import React from "react";
 import styled from "styled-components";
-import { Avatar, Chip, CircularProgress, Container, CssBaseline, List, ListItem, ListItemText, Paper, Typography } from "@material-ui/core";
+import { Avatar, Chip, CircularProgress, Container, CssBaseline, List, ListItem, ListItemAvatar, ListItemText, Paper, Typography } from "@material-ui/core";
 
 type PageContainerProps = {
   children: React.ReactNode;
 }
 export const PageContainer = (props: PageContainerProps) => {
   return (
-    <Container component="main" maxWidth="xs">
+    <Container component="main" maxWidth="md">
       <CssBaseline />
       {props.children}
     </Container>
@@ -34,17 +34,28 @@ type TextProps = {
 }
 export const PageHeader = (props: TextProps) => {
   return (
-    <Typography variant="h3">{props.textContent}</Typography>
+    <Typography variant="h3" align="center">{props.textContent}</Typography>
   );
 }
 
+const StyledAvatar = styled(Avatar)`
+  > .MuiAvatar-colorDefault {
+    color: white;
+    background-color: green;
+  }
+`
 type AttributeProps = {
   name?: string;
   value: string;
+  avatar?: boolean;
 };
 export const Attribute = (props: AttributeProps) => {
+  console.log(props);
   return (
     <ListItem>
+      {props.avatar &&
+        <ListItemAvatar><StyledAvatar>{props.value.charAt(0).toUpperCase()}</StyledAvatar></ListItemAvatar>
+      }
       <ListItemText primary={props.value} secondary={props.name} />
     </ListItem>
   );
@@ -58,7 +69,7 @@ type AttributeListProps = {
 export const AttributeList = (props: AttributeListProps) => {
   return (
     <List dense={props.dense ? props.dense : false}>
-      <Typography variant={props.dense ? "h6" : "h4"}>{props.title}</Typography>
+      <Typography variant={props.dense ? "h6" : "h4"} align="center">{props.title}</Typography>
       {props.children}
     </List>
   );
@@ -80,9 +91,6 @@ export const Panel = (props: PanelProps) => {
   );
 };
 
-type SkillListProps = {
-  skills: Skill[];
-}
 const SkillBox = styled.div`
   display: flex;
   flex-direction: row;
@@ -92,7 +100,10 @@ const SkillBox = styled.div`
     margin: 4px;
   }
 `;
-export const SkillList = (props: SkillListProps) => {
+type WeightedSkillListProps = {
+  skills: Skill[];
+}
+export const WeightedSkillList = (props: WeightedSkillListProps) => {
   return (
     <SkillBox>
       {props.skills.map((skill) => {
@@ -101,6 +112,24 @@ export const SkillList = (props: SkillListProps) => {
             avatar={<Avatar>{skill.votes}</Avatar>}
             key={skill.name}
             label={skill.name}
+            color="primary"
+          />
+        )
+      })}
+    </SkillBox>
+  )
+}
+type SkillListProps = {
+  skills: string[];
+}
+export const SkillList = (props: SkillListProps) => {
+  return (
+    <SkillBox>
+      {props.skills.map((skill) => {
+        return (
+          <Chip
+            key={skill}
+            label={skill}
             color="primary"
           />
         )
