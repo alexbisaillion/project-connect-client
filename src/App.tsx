@@ -12,6 +12,7 @@ import { teal } from '@material-ui/core/colors';
 import { LoadingIndicator } from './components/commonComponents';
 import { Project } from './components/Project';
 import { CreateProject } from './components/CreateProject';
+import { Home } from './components/pages/Home';
 
 const theme = createMuiTheme({
   palette: {
@@ -43,12 +44,12 @@ export const App = () => {
     }
     return (
       <BrowserRouter>
+        <Route exact path="/" component={Home} />
         <Route path="/login" component={SignIn} />
         <Route path="/register" component={Register} />
         <Route path="/user/:username" component={User} />
         <Route path="/project/:name" component={Project} />
         <AuthenticatedRouter path="/createProject" component={CreateProject} />
-        <AuthenticatedRouter path="/home" component={DummyHomePage} />
         <AuthenticatedRouter path="/users" component={Users} />
       </BrowserRouter>
     );
@@ -60,10 +61,6 @@ export const App = () => {
       {getContent()}
     </MuiThemeProvider>
   );
-}
-
-const DummyHomePage = () => {
-  return <h1>Home</h1>;
 }
 
 type AuthenticatedRouterProps = {

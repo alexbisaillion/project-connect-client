@@ -2,6 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import { Avatar, Button, Chip, CircularProgress, Container, CssBaseline, List, ListItem, ListItemAvatar, ListItemText, Paper, TextField, Typography } from "@material-ui/core";
 import Autocomplete from "@material-ui/lab/Autocomplete";
+import { Link } from "react-router-dom";
 
 type PageContainerProps = {
   children: React.ReactNode;
@@ -194,4 +195,16 @@ export const ApplyButton = (props: ApplyButtonProps) => {
       {props.name}
     </Button>
   )
+}
+
+type LinkButtonProps = {
+  link: string;
+  name: string;
+}
+export const LinkButton = (props: LinkButtonProps) => {
+  return (
+    <Button component={ Link } to={props.link} fullWidth variant="contained" color="primary">
+      {props.name}
+    </Button>
+  );
 }
