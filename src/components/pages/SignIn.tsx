@@ -11,8 +11,11 @@ const SignInContainer = styled.div`
   height: 300px;
   justify-content: space-around;
   align-items: center;
-  width: 400px;
 `;
+
+const StyledLink = styled(Link)`
+  color: white;
+`
 
 export const SignIn = () => {
   const [username, setUsername] = React.useState<string>("");
@@ -34,7 +37,7 @@ export const SignIn = () => {
           <TextField fullWidth variant="outlined" label="Username" name="username" autoFocus onChange={(e => setUsername(e.target.value))}/>
           <TextField fullWidth variant="outlined" label="Password" name="password" type="password" autoFocus onChange={(e => setPassword(e.target.value))}/>
           <Button fullWidth variant="contained" color="primary" type="submit" onClick={() => attemptLogin()}>Sign in</Button>
-          <Link to="/register">Don't have an account? Register here.</Link>
+          <StyledLink to="/register">Don't have an account? Register here.</StyledLink>
         </SignInContainer>
       </PageContainer>
     );
