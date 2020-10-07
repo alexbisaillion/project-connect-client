@@ -5,7 +5,6 @@ import { authenticationManager } from './authenticationManager';
 import { Register } from './components/pages/Register';
 import { SignIn } from './components/pages/SignIn';
 import { User } from './components/User';
-import { Users } from './components/Users'
 import { NavBar } from "./components/NavBar";
 import { createMuiTheme, MuiThemeProvider } from '@material-ui/core';
 import { teal } from '@material-ui/core/colors';
@@ -55,7 +54,6 @@ export const App = () => {
         <Route path="/project/:name" component={Project} />
         <Route path="/search" component={SearchResults} />
         <AuthenticatedRouter path="/createProject" component={CreateProject} />
-        <AuthenticatedRouter path="/users" component={Users} />
       </BrowserRouter>
     );
   };

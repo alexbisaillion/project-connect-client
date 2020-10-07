@@ -26,7 +26,6 @@ export const Project = (props: ComponentProps) => {
   React.useEffect(() => {
     const fetchProject = async () => {
       const fetchedProject = await getProject(name);
-      console.log(fetchedProject.data.startDate);
       setLoadedProject(fetchedProject.data);
     }
     fetchProject();

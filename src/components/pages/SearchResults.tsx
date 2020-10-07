@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import { useLocation } from "react-router-dom";
-import { Attribute, AttributeList, LoadingIndicator, PageContainer, PageHeader } from "../commonComponents";
+import { LoadingIndicator, PageContainer, PageHeader, SearchResultsTable } from "../commonComponents";
 import { getProjects, getUsers } from "../../api";
 
 const SearchResultsContainer = styled.div`
@@ -46,25 +46,9 @@ export const SearchResults = () => {
 
   const renderResults = () => {
     if (type === "user" && userResults.length > 0) {
-      return (
-        <AttributeList title="User search results">
-          {userResults.map((user) => {
-            return (
-              <Attribute value={user.username} />
-            )
-          })}
-        </AttributeList>
-      );
+      return <SearchResultsTable userData={userResults} dataType="user" />
     } else if (type === "project" && projectResults.length > 0) {
-      return (
-        <AttributeList title="Project search results">
-          {projectResults.map((project) => {
-            return (
-              <Attribute value={project.name} />
-            )
-          })}
-        </AttributeList>
-      );
+      return <SearchResultsTable projectData={projectResults} dataType="project" />
     } else {
       return <><p>No results</p></>
     }
@@ -76,6 +60,7 @@ export const SearchResults = () => {
     }
     return (
       <SearchResultsContainer>
+        <PageHeader textContent={type === "user" ? "User Search Results" : "Project Search Results"} />
         {renderResults()}
       </SearchResultsContainer>
     );

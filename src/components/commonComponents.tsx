@@ -1,11 +1,12 @@
 import React from "react";
 import styled from "styled-components";
-import { Avatar, Button, Chip, CircularProgress, Container, CssBaseline, IconButton, InputAdornment, List, ListItem, ListItemAvatar, ListItemText, Paper, TextField, Typography } from "@material-ui/core";
+import { Avatar, Button, Chip, CircularProgress, Container, CssBaseline, IconButton, InputAdornment, List, ListItem, ListItemAvatar, ListItemText, Paper, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography } from "@material-ui/core";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import { Link } from "react-router-dom";
 import PersonIcon from '@material-ui/icons/Person';
 import AccountTreeIcon from '@material-ui/icons/AccountTree';
 import SearchIcon from '@material-ui/icons/Search';
+import { getDisplayDate } from "../utilities";
 
 type PageContainerProps = {
   children: React.ReactNode;
@@ -247,4 +248,101 @@ export const SearchControl = (props: SearchControlProps) => {
       </IconButton>
     </>
   )
+}
+
+type SearchResultsTableProps = {
+  userData?: IUser[];
+  projectData?: IProject[];
+  dataType: string;
+}
+export const SearchResultsTable = (props: SearchResultsTableProps) => {
+  const getProjectsHeader = () => {
+    return (
+      <TableHead>
+        <TableRow>
+          {["Name", "Start Date", "In Progress"].map(header => {
+            return (
+              <TableCell key={header} align="right">{header}</TableCell>
+            );
+          })}
+        </TableRow>
+      </TableHead>
+    );
+  }
+  const getProjectsBody = (projects: IProject[]) => {
+    return (
+      <TableBody>
+        {projects.map((project: IProject) => {
+          return (
+            <TableRow key={project.name} component={ Link } to={`/project/${project.name}`}>
+              {[project.name, getDisplayDate(project.startDate), project.isInProgress === true ? "True" : "False"].map(attribute => {
+                  return (
+                    <TableCell align="right" key={project.name + "-" + attribute}>{attribute}</TableCell>
+                  );
+              })}
+            </TableRow>
+          )
+        })}
+      </TableBody>
+    );
+  }
+
+  const getUsersHeader = () => {
+    return (
+      <TableHead>
+        <TableRow>
+          {["Name", "Region", "Position", "Industry"].map(header => {
+            return (
+              <TableCell key={header} align="right">{header}</TableCell>
+            );
+          })}
+        </TableRow>
+      </TableHead>
+    )
+  }
+  const getUsersBody = (users: IUser[]) => {
+    return (
+      <TableBody>
+        {users.map((user: IUser) => {
+          return (
+            <TableRow key={user.username} component={ Link } to={`/user/${user.username}`}>
+              {[
+                user.name,
+                user.region,
+                user.currentEmployment.position + " at " + user.currentEmployment.company,
+                user.industry
+              ].map(attribute => {
+                  return (
+                    <TableCell align="right" key={user.username + "-" + attribute}>{attribute}</TableCell>
+                  );
+              })}
+            </TableRow>
+          )
+        })}
+      </TableBody>
+    );
+  }
+
+  const getContent = () => {
+    if (props.dataType.toLowerCase() === "user") {
+      return (
+        <>
+          {getUsersHeader()}
+          {getUsersBody(props.userData ?? [])}
+        </>
+      );
+    }
+    return (
+      <>
+        {getProjectsHeader()}
+        {getProjectsBody(props.projectData ?? [])}
+      </>
+    );
+  }
+
+  return (
+    <TableContainer style={{ width: "auto"}} component={Paper}>
+      {getContent()}
+    </TableContainer>
+  );
 }

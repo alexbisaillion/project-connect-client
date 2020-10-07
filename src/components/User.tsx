@@ -38,7 +38,6 @@ export const User = (props: ComponentProps) => {
         const fetchedProject = await getProject(name);
         projects.push(fetchedProject.data);
       }
-      console.log(projects);
       setLoadedProjects([...projects]);
     }
     if (loadedUser && loadedUser.projects) {
