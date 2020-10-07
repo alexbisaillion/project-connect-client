@@ -67,7 +67,7 @@ export const User = (props: ComponentProps) => {
         </Panel>
         <Panel>
           <AttributeList title="Skills">
-            <AttributeList title="Basic" dense={true}>
+            <AttributeList title="Basic Skills" dense={true}>
               <WeightedSkillList skills={loadedUser.skills} />
             </AttributeList>
             <AttributeList title="Programming Languages" dense={true}>

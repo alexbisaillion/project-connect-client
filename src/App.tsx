@@ -13,6 +13,7 @@ import { LoadingIndicator } from './components/commonComponents';
 import { Project } from './components/Project';
 import { CreateProject } from './components/CreateProject';
 import { Home } from './components/pages/Home';
+import { SideBar } from './components/SideBar';
 
 const theme = createMuiTheme({
   palette: {
@@ -26,6 +27,7 @@ const theme = createMuiTheme({
 
 export const App = () => {
   const [isInitialized, setIsInitialized] = React.useState<boolean>(false);
+  const [isSideBarOpen, setIsSideBarOpen] = React.useState<boolean>(false);
 
   useEffect(() => {
     async function initialize() {
@@ -44,6 +46,7 @@ export const App = () => {
     }
     return (
       <BrowserRouter>
+        <SideBar isOpen={isSideBarOpen} onChange={() => setIsSideBarOpen(!isSideBarOpen)} />
         <Route exact path="/" component={Home} />
         <Route path="/login" component={SignIn} />
         <Route path="/register" component={Register} />
@@ -57,7 +60,7 @@ export const App = () => {
 
   return (
     <MuiThemeProvider theme={theme}>
-      <NavBar />
+      <NavBar menuOnClick={() => setIsSideBarOpen(!isSideBarOpen)} />
       {getContent()}
     </MuiThemeProvider>
   );

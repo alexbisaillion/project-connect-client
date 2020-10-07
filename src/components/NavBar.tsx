@@ -13,14 +13,17 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-export const NavBar = () => {
+type NavBarProps = {
+  menuOnClick: () => void;
+}
+export const NavBar = (props: NavBarProps) => {
   const classes = useStyles();
 
   return (
     <div className={classes.root}>
       <AppBar position="static">
         <Toolbar variant="dense">
-          <IconButton edge="start" className={classes.menuButton} color="inherit" aria-label="menu">
+          <IconButton edge="start" className={classes.menuButton} color="inherit" aria-label="menu" onClick={props.menuOnClick}>
             <MenuIcon />
           </IconButton>
           <Typography variant="h6" color="inherit">ProjectConnect</Typography>

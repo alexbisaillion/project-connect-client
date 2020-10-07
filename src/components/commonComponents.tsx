@@ -36,7 +36,7 @@ type TextProps = {
 }
 export const PageHeader = (props: TextProps) => {
   return (
-    <Typography variant="h3" align="center">{props.textContent}</Typography>
+    <Typography component="h1" variant="h5" align="center">{props.textContent}</Typography>
   );
 }
 
@@ -71,7 +71,7 @@ type AttributeListProps = {
 export const AttributeList = (props: AttributeListProps) => {
   return (
     <List dense={props.dense ? props.dense : false}>
-      <Typography variant={props.dense ? "h6" : "h4"} align="center">{props.title}</Typography>
+      <Typography component="h1" variant="h6" align="center">{props.title}</Typography>
       {props.children}
     </List>
   );

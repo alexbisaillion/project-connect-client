@@ -1,9 +1,11 @@
 import React from "react";
 import styled from "styled-components";
-import { Button, Container, CssBaseline, TextField, Typography, Chip } from "@material-ui/core";
+import { Button, TextField, Typography, Chip } from "@material-ui/core";
 import { attributeManager } from "../../attributeManager";
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import { register } from "../../api";
+import { PageContainer, PageHeader } from "../commonComponents";
+import { Redirect } from "react-router-dom";
 
 const RegisterContainer = styled.div`
   display: flex;
@@ -60,13 +62,15 @@ export const Register = () => {
 
   const [view, setView] = React.useState<RegisterState>(RegisterState.BasicInfo);
 
+  const [isRegistered, setIsRegistered] = React.useState<boolean>(false);
+
   const renderBasicInformation = () => {
     if (view !== RegisterState.BasicInfo) {
       return;
     }
     return (
       <>
-        <Typography variant="h4">Basic Information</Typography>
+        <Typography variant="h6">Basic Information</Typography>
         <TextField fullWidth variant="outlined" label="Username" autoFocus value={username} onChange={(e) => setUsername(e.target.value)} error={username.length <= 0}/>
         <TextField fullWidth variant="outlined" label="Password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} error={password.length <= 0}/>
         <TextField fullWidth variant="outlined" label="Display Name" value={displayName} onChange={(e) => setDisplayName(e.target.value)} error={displayName.length <= 0}/>
@@ -250,17 +254,30 @@ export const Register = () => {
       programmingLanguages: selectedProgrammingLanguages,
       frameworks: selectedFrameworks
     });
+
+    if (result.data.success) {
+      setIsRegistered(true);
+    }
+  }
+
+  const getContent = () => {
+    if (isRegistered) {
+      return <Redirect to="/" />
+    } else {
+      return (
+        <RegisterContainer>
+          <PageHeader textContent="Register" />
+          {renderBasicInformation()}
+          {renderEmploymentInformation()}
+          {renderSkillInformation()}
+        </RegisterContainer>
+      );
+    }
   }
 
   return (
-    <Container component="main" maxWidth="xs">
-      <CssBaseline />
-      <RegisterContainer>
-        <Typography variant="h2">Register</Typography>
-        {renderBasicInformation()}
-        {renderEmploymentInformation()}
-        {renderSkillInformation()}
-      </RegisterContainer>
-    </Container>
+    <PageContainer>
+      {getContent()}
+    </PageContainer>
   );
 }
