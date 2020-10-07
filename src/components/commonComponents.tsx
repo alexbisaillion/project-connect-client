@@ -1,8 +1,11 @@
 import React from "react";
 import styled from "styled-components";
-import { Avatar, Button, Chip, CircularProgress, Container, CssBaseline, List, ListItem, ListItemAvatar, ListItemText, Paper, TextField, Typography } from "@material-ui/core";
+import { Avatar, Button, Chip, CircularProgress, Container, CssBaseline, IconButton, InputAdornment, List, ListItem, ListItemAvatar, ListItemText, Paper, TextField, Typography } from "@material-ui/core";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import { Link } from "react-router-dom";
+import PersonIcon from '@material-ui/icons/Person';
+import AccountTreeIcon from '@material-ui/icons/AccountTree';
+import SearchIcon from '@material-ui/icons/Search';
 
 type PageContainerProps = {
   children: React.ReactNode;
@@ -52,7 +55,6 @@ type AttributeProps = {
   avatar?: boolean;
 };
 export const Attribute = (props: AttributeProps) => {
-  console.log(props);
   return (
     <ListItem>
       {props.avatar &&
@@ -207,4 +209,40 @@ export const LinkButton = (props: LinkButtonProps) => {
       {props.name}
     </Button>
   );
+}
+
+export enum SearchIconType {
+  User, Project
+}
+type SearchControlProps = {
+  searchTerm: string;
+  onChange: (newSearchTerm: string) => void;
+  icon: SearchIconType;
+}
+export const SearchControl = (props: SearchControlProps) => {
+  return (
+    <>
+      <TextField
+        fullWidth
+        variant="outlined"
+        value={props.searchTerm}
+        onChange={(e) => props.onChange(e.target.value)}
+        placeholder={props.icon === SearchIconType.User ? "Search users" : "Search projects"}
+        InputProps={{
+          startAdornment: (
+            <InputAdornment position="start">
+              {props.icon === SearchIconType.User ? <PersonIcon /> : <AccountTreeIcon /> }
+            </InputAdornment>
+          ),
+        }}
+      />
+      <IconButton
+        color="inherit"
+        component={Link}
+        to={`/search?type=${props.icon === SearchIconType.User ? "user" : "project"}&term=${props.searchTerm}`}
+      >
+        <SearchIcon />
+      </IconButton>
+    </>
+  )
 }

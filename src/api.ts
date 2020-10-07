@@ -99,6 +99,15 @@ export const getProject = async (name: string): Promise<AxiosResponse<IProject>>
   }
 }
 
+export const getProjects = async (): Promise<AxiosResponse<IProject[]>> => {
+  try {
+    const projects: AxiosResponse<IProject[]> = await axios.get(baseUrl + "/projects");
+    return projects;
+  } catch (error) {
+    throw new Error(error);
+  }
+}
+
 export type ProjectInfo = {
   name: string;
   skills: string[];

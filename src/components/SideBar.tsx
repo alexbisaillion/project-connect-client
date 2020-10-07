@@ -3,6 +3,7 @@ import CreateIcon from '@material-ui/icons/Create';
 import HomeIcon from '@material-ui/icons/Home';
 import { Drawer, List, ListItem, ListItemIcon, ListItemText } from "@material-ui/core";
 import { Link } from "react-router-dom";
+import { SearchControl, SearchIconType, TextControl } from "./commonComponents";
 
 type SideBarProps = {
   isOpen: boolean;
@@ -10,22 +11,28 @@ type SideBarProps = {
 }
 export const SideBar = (props: SideBarProps) => {
   const { isOpen, onChange } = props;
+  const [userSearchTerm, setUserSearchTerm] = React.useState<string>("");
+  const [projectSearchTerm, setProjectSearchTerm] = React.useState<string>("");
 
   const list = () => {
     return (
       <div
         role="presentation"
-        onClick={onChange}
-        onKeyDown={onChange}
       >
         <List>
-          <ListItem button component={Link} to="/">
+          <ListItem button component={Link} to="/" onClick={onChange}>
             <ListItemIcon><HomeIcon /></ListItemIcon>
             <ListItemText primary={"Home"} />
           </ListItem>
-          <ListItem button component={Link} to="/createProject">
+          <ListItem button component={Link} to="/createProject" onClick={onChange}>
             <ListItemIcon><CreateIcon /></ListItemIcon>
             <ListItemText primary={"Start a new project"} />
+          </ListItem>
+          <ListItem>
+            <SearchControl searchTerm={userSearchTerm} onChange={(newSearchTerm: string) => setUserSearchTerm(newSearchTerm)} icon={SearchIconType.User} />
+          </ListItem>
+          <ListItem>
+            <SearchControl searchTerm={projectSearchTerm} onChange={(newSearchTerm: string) => setProjectSearchTerm(newSearchTerm)} icon={SearchIconType.Project} />
           </ListItem>
         </List>
       </div>
