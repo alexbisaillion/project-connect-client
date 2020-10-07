@@ -1,4 +1,4 @@
-import { isLoggedIn, login } from "./api";
+import { isLoggedIn, login, logout } from "./api";
 
 class AuthenticationManager {
   private isLoggedIn: boolean;
@@ -31,6 +31,12 @@ class AuthenticationManager {
       this.isLoggedIn = true;
       this.loggedInUser = username;
     }
+  }
+
+  async attemptLogout() {
+    await logout();
+    this.isLoggedIn = false;
+    this.loggedInUser = "";
   }
 }
 

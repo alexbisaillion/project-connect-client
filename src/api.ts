@@ -40,6 +40,15 @@ export const login = async (username: string, password: string): Promise<AxiosRe
   }
 }
 
+export const logout = async (): Promise<AxiosResponse<SuccessResponse>> => {
+  try {
+    const res: AxiosResponse<SuccessResponse> = await axios.post(baseUrl + "/logout");
+    return res;
+  } catch (error) {
+    throw new Error(error);
+  }
+}
+
 export const getSkills = async (): Promise<AxiosResponse<string[]>> => {
   try {
     const skills: AxiosResponse<string[]> = await axios.get(baseUrl + "/skills");
