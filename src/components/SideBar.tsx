@@ -3,7 +3,7 @@ import CreateIcon from '@material-ui/icons/Create';
 import HomeIcon from '@material-ui/icons/Home';
 import { Drawer, List, ListItem, ListItemIcon, ListItemText } from "@material-ui/core";
 import { Link } from "react-router-dom";
-import { SearchControl, SearchIconType, TextControl } from "./commonComponents";
+import { SearchControl, SearchIconType } from "./commonComponents";
 
 type SideBarProps = {
   isOpen: boolean;
@@ -29,10 +29,20 @@ export const SideBar = (props: SideBarProps) => {
             <ListItemText primary={"Start a new project"} />
           </ListItem>
           <ListItem>
-            <SearchControl searchTerm={userSearchTerm} onChange={(newSearchTerm: string) => setUserSearchTerm(newSearchTerm)} icon={SearchIconType.User} />
+            <SearchControl
+              searchTerm={userSearchTerm}
+              onChange={(newSearchTerm: string) => setUserSearchTerm(newSearchTerm)}
+              icon={SearchIconType.User}
+              dismiss={onChange}
+            />
           </ListItem>
           <ListItem>
-            <SearchControl searchTerm={projectSearchTerm} onChange={(newSearchTerm: string) => setProjectSearchTerm(newSearchTerm)} icon={SearchIconType.Project} />
+            <SearchControl
+              searchTerm={projectSearchTerm}
+              onChange={(newSearchTerm: string) => setProjectSearchTerm(newSearchTerm)}
+              icon={SearchIconType.Project}
+              dismiss={onChange}
+            />
           </ListItem>
         </List>
       </div>

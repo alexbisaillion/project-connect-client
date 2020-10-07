@@ -218,6 +218,7 @@ type SearchControlProps = {
   searchTerm: string;
   onChange: (newSearchTerm: string) => void;
   icon: SearchIconType;
+  dismiss?: () => void;
 }
 export const SearchControl = (props: SearchControlProps) => {
   return (
@@ -240,6 +241,7 @@ export const SearchControl = (props: SearchControlProps) => {
         color="inherit"
         component={Link}
         to={`/search?type=${props.icon === SearchIconType.User ? "user" : "project"}&term=${props.searchTerm}`}
+        onClick={props.dismiss}
       >
         <SearchIcon />
       </IconButton>

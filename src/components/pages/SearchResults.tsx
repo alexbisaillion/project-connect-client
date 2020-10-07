@@ -20,12 +20,13 @@ function useQuery() {
 
 export const SearchResults = () => {
   const query = useQuery();
+  const type = query.get("type") || "";
+  const term = query.get("term") || "";
   const [isSearching, setIsSearching] = React.useState<boolean>(false);
   const [userResults, setUserResults] = React.useState<IUser[]>([]);
   const [projectResults, setProjectResults] = React.useState<IProject[]>([]);
 
   React.useEffect(() => {
-    console.log("firing effect");
     const fetchUsers = async (term: string) => {
       const fetchedUsers = await getUsers();
       setUserResults(fetchedUsers.data.filter(user => user.name.toLowerCase().startsWith(term.toLowerCase()) || user.username.toLowerCase().startsWith(term.toLowerCase())));
@@ -36,19 +37,14 @@ export const SearchResults = () => {
       setProjectResults(fetchedProjects.data.filter(project => project.name.toLowerCase().startsWith(term.toLowerCase())));
     }
 
-    const type = query.get("type") || "";
-    const term = query.get("term") || "";
-
     if (type.toLowerCase() === "user") {
       fetchUsers(term);
     } else if (type.toLowerCase() === "project") {
       fetchProjects(term);
     }
-  }, []);
+  }, [type, term]);
 
   const renderResults = () => {
-    const type = query.get("type") || "";
-
     if (type === "user" && userResults.length > 0) {
       return (
         <AttributeList title="User search results">
@@ -70,7 +66,7 @@ export const SearchResults = () => {
         </AttributeList>
       );
     } else {
-      return <></>
+      return <><p>No results</p></>
     }
   }
 
