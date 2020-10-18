@@ -243,6 +243,7 @@ export const SearchControl = (props: SearchControlProps) => {
         component={Link}
         to={`/search?type=${props.icon === SearchIconType.User ? "user" : "project"}&term=${props.searchTerm}`}
         onClick={props.dismiss}
+        disabled={props.searchTerm.length <= 0}
       >
         <SearchIcon />
       </IconButton>
