@@ -1,6 +1,8 @@
 import React from "react";
 import CreateIcon from '@material-ui/icons/Create';
 import HomeIcon from '@material-ui/icons/Home';
+import PersonIcon from '@material-ui/icons/Person';
+import AccountTreeIcon from '@material-ui/icons/AccountTree';
 import { Drawer, List, ListItem, ListItemIcon, ListItemText } from "@material-ui/core";
 import { Link } from "react-router-dom";
 import { SearchControl, SearchIconType } from "./commonComponents";
@@ -27,6 +29,10 @@ export const SideBar = (props: SideBarProps) => {
           <ListItem button component={Link} to="/createProject" onClick={onChange}>
             <ListItemIcon><CreateIcon /></ListItemIcon>
             <ListItemText primary={"Start a new project"} />
+          </ListItem>
+          <ListItem button component={Link} to="/users" onClick={onChange}>
+            <ListItemIcon><PersonIcon /></ListItemIcon>
+            <ListItemText primary={"All Users"} />
           </ListItem>
           <ListItem>
             <SearchControl
