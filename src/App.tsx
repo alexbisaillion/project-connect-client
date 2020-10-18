@@ -15,6 +15,7 @@ import { Home } from './components/pages/Home';
 import { SideBar } from './components/SideBar';
 import { SearchResults } from './components/pages/SearchResults';
 import { Users } from './components/pages/Users';
+import { Projects } from './components/pages/Projects';
 
 const theme = createMuiTheme({
   palette: {
@@ -55,6 +56,7 @@ export const App = () => {
         <Route path="/project/:name" component={Project} />
         <Route path="/search" component={SearchResults} />
         <Route path="/users" component={Users} />
+        <Route path="/projects" component={Projects} /> 
         <AuthenticatedRouter path="/createProject" component={CreateProject} />
       </BrowserRouter>
     );

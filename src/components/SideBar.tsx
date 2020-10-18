@@ -34,6 +34,10 @@ export const SideBar = (props: SideBarProps) => {
             <ListItemIcon><PersonIcon /></ListItemIcon>
             <ListItemText primary={"All Users"} />
           </ListItem>
+          <ListItem button component={Link} to="/projects" onClick={onChange}>
+            <ListItemIcon><AccountTreeIcon /></ListItemIcon>
+            <ListItemText primary={"All Projects"} />
+          </ListItem>
           <ListItem>
             <SearchControl
               searchTerm={userSearchTerm}
