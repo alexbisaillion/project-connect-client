@@ -123,6 +123,7 @@ export type ProjectInfo = {
   skills: string[];
   programmingLanguages: string[];
   frameworks: string[];
+  description: string;
 }
 export const addProject = async (info: ProjectInfo): Promise<AxiosResponse<SuccessResponse>> => {
   try {

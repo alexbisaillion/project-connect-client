@@ -17,6 +17,7 @@ const CreateProjectContainer = styled.div`
 
 export const CreateProject = () => {
   const [projectName, setProjectName] = React.useState<string>("");
+  const [description, setDescription] = React.useState<string>("");
   const [selectedSkills, setSelectedSkills] = React.useState<string[]>([]);
   const [selectedProgrammingLanguages, setSelectedProgrammingLanguages] = React.useState<string[]>([]);
   const [selectedFrameworks, setSelectedFrameworks] = React.useState<string[]>([]);
@@ -27,7 +28,8 @@ export const CreateProject = () => {
       name: projectName,
       skills: selectedSkills,
       programmingLanguages: selectedProgrammingLanguages,
-      frameworks: selectedFrameworks
+      frameworks: selectedFrameworks,
+      description: description
     });
     
     if (result.data.success) {
@@ -43,6 +45,7 @@ export const CreateProject = () => {
         <CreateProjectContainer>
           <PageHeader textContent="Start a new project" />
           <TextControl name="Project Name" value={projectName} onChange={(newValue: string) => setProjectName(newValue)} />
+          <TextControl large name="Description" value={description} onChange={(newValue: string) => setDescription(newValue)} />
           <AttributeDropdown
             name="Basic Skills"
             options={attributeManager.getSkills()}

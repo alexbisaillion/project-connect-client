@@ -13,6 +13,7 @@ interface IUser {
   skills: Skill[];
   programmingLanguages: Skill[];
   frameworks: Skill[];
+  bio: string;
   __v: number
 }
 
@@ -27,6 +28,7 @@ interface IProject {
   startDate: string;
   isInProgress: boolean;
   completionDate?: string;
+  description: string;
   __v: number
 }
 

@@ -169,6 +169,7 @@ type TextControlProps = {
   name: string;
   value: string;
   onChange: (newValue: string) => void;
+  large?: boolean;
 }
 export const TextControl = (props: TextControlProps) => {
   return (
@@ -179,6 +180,9 @@ export const TextControl = (props: TextControlProps) => {
       value={props.value}
       onChange={(e) => props.onChange(e.target.value)}
       error={props.value.length <= 0}
+      multiline={props.large}
+      rows={props.large ? 10 : undefined}
+      rowsMax={props.large ? 10 : undefined}
     />
   )
 }
