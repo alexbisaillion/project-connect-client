@@ -251,6 +251,11 @@ export const SearchControl = (props: SearchControlProps) => {
   )
 }
 
+// Material ui TableCell component prop does not work with react router Link component
+// Incompatible props...
+const StyledLink = styled(Link)`
+  color: white
+`;
 type SearchResultsTableProps = {
   userData?: IUser[];
   projectData?: IProject[];
@@ -275,8 +280,11 @@ export const SearchResultsTable = (props: SearchResultsTableProps) => {
       <TableBody>
         {projects.map((project: IProject) => {
           return (
-            <TableRow key={project.name} component={ Link } to={`/project/${project.name}`}>
-              {[project.name, getDisplayDate(project.startDate), project.isInProgress === true ? "True" : "False"].map(attribute => {
+            <TableRow key={project.name}>
+              <TableCell align="right">
+                <StyledLink to={`/project/${project.name}`}>{project.name}</StyledLink>
+              </TableCell>
+              {[getDisplayDate(project.startDate), project.isInProgress === true ? "True" : "False"].map(attribute => {
                   return (
                     <TableCell align="right" key={project.name + "-" + attribute}>{attribute}</TableCell>
                   );
@@ -306,9 +314,11 @@ export const SearchResultsTable = (props: SearchResultsTableProps) => {
       <TableBody>
         {users.map((user: IUser) => {
           return (
-            <TableRow key={user.username} component={ Link } to={`/user/${user.username}`}>
+            <TableRow key={user.username}>
+              <TableCell align="right">
+                <StyledLink to={`/user/${user.username}`}>{user.name}</StyledLink>
+              </TableCell>
               {[
-                user.name,
                 user.region,
                 user.currentEmployment.position + " at " + user.currentEmployment.company,
                 user.industry
