@@ -89,6 +89,7 @@ export type RegistrationInfo = {
   skills: string[];
   programmingLanguages: string[];
   frameworks: string[];
+  bio: string;
 };
 export const register = async (info: RegistrationInfo): Promise<AxiosResponse<SuccessResponse>> => {
   try {

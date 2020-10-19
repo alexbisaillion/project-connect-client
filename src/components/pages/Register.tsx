@@ -52,6 +52,7 @@ export const Register = () => {
   const [displayName, setDisplayName] = React.useState<string>("");
   const [age, setAge] = React.useState<number>(-1);
   const [region, setRegion] = React.useState<string>("");
+  const [bio, setBio] = React.useState<string>("");
   const [education, setEducation] = React.useState<string>("");
   const [industry, setIndustry] = React.useState<string>("");
   const [currentPosition, setCurrentPosition] = React.useState<Position>({ company: "", position: ""});
@@ -76,6 +77,17 @@ export const Register = () => {
         <TextField fullWidth variant="outlined" label="Display Name" value={displayName} onChange={(e) => setDisplayName(e.target.value)} error={displayName.length <= 0}/>
         <TextField fullWidth variant="outlined" label="Age" type="number" value={age < 0 ? "" : age} onChange={(e) => setAge(Number(e.target.value))} error={age < 0}/>
         <TextField fullWidth variant="outlined" label="Region" value={region} onChange={(e) => setRegion(e.target.value)} error={region.length <= 0}/>
+        <TextField
+          fullWidth
+          variant="outlined"
+          label="Bio"
+          placeholder="Tell us about yourself!"
+          multiline
+          rows={8}
+          rowsMax={8}
+          value={bio}
+          onChange={(e) => setBio(e.target.value)}
+        />
         <Button
           fullWidth
           variant="contained"
@@ -252,7 +264,8 @@ export const Register = () => {
       pastEmployment: pastPositions,
       skills: selectedSkills,
       programmingLanguages: selectedProgrammingLanguages,
-      frameworks: selectedFrameworks
+      frameworks: selectedFrameworks,
+      bio
     });
 
     if (result.data.success) {
