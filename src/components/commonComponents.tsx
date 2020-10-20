@@ -37,17 +37,22 @@ export const LoadingIndicator = () => {
 
 type TextProps = {
   textContent: string;
+  alignment?: "left" | "right" | "center";
+  size?: "h3" | "h6" | "h5" | "subtitle1";
 }
 export const PageHeader = (props: TextProps) => {
   return (
-    <Typography component="h1" variant="h5" align="center">{props.textContent}</Typography>
+    <Typography
+      variant={props.size ? props.size : "h3"}
+      align={props.alignment ? props.alignment : "center"}>
+      {props.textContent}
+    </Typography>
   );
 }
 
 const StyledAvatar = styled(Avatar)`
   > .MuiAvatar-colorDefault {
     color: white;
-    background-color: green;
   }
 `
 type AttributeProps = {
@@ -74,7 +79,7 @@ type AttributeListProps = {
 export const AttributeList = (props: AttributeListProps) => {
   return (
     <List dense={props.dense ? props.dense : false}>
-      <Typography component="h1" variant="h6" align="center">{props.title}</Typography>
+      <Typography variant={props.dense ? "subtitle1" : "h5"} align="center">{props.title}</Typography>
       {props.children}
     </List>
   );
@@ -84,7 +89,7 @@ type PanelProps = {
   children: React.ReactNode;
 }
 const StyledPaper = styled(Paper)`
-  > .MuiList-padding {
+  && {
     padding: 16px;
   }
 `;
@@ -270,7 +275,7 @@ export const SearchResultsTable = (props: SearchResultsTableProps) => {
     return (
       <TableHead>
         <TableRow>
-          {["Name", "Start Date", "In Progress"].map(header => {
+          {["Name", "Creator", "Start Date", "In Progress"].map(header => {
             return (
               <TableCell key={header} align="right">{header}</TableCell>
             );
@@ -287,6 +292,9 @@ export const SearchResultsTable = (props: SearchResultsTableProps) => {
             <TableRow key={project.name}>
               <TableCell align="right">
                 <StyledLink to={`/project/${project.name}`}>{project.name}</StyledLink>
+              </TableCell>
+              <TableCell align="right">
+                <StyledLink to={`/user/${project.creator}`}>{project.creator}</StyledLink>
               </TableCell>
               {[getDisplayDate(project.startDate), project.isInProgress === true ? "True" : "False"].map(attribute => {
                   return (
@@ -359,5 +367,26 @@ export const SearchResultsTable = (props: SearchResultsTableProps) => {
     <TableContainer style={{ width: "auto"}} component={Paper}>
       {getContent()}
     </TableContainer>
+  );
+}
+
+const StyledUserAvatar = styled(Avatar)`
+  && {
+    color: white;
+    height: 225px;
+    width: 225px;
+    font-size: 100px;
+    background-color: #009688;
+  }
+`
+type UserAvatarProps = {
+  large?: boolean;
+  name: string;
+}
+export const UserAvatar = (props: UserAvatarProps) => {
+  const names = props.name.toUpperCase().split(" ");
+  const initial = names[0].charAt(0) + (names[1] !== undefined ? names[1].charAt(0) : "");
+  return (
+    <StyledUserAvatar>{initial}</StyledUserAvatar>
   );
 }

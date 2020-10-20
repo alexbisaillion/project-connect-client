@@ -20,6 +20,7 @@ interface IUser {
 interface IProject {
   _id: string
   name: string;
+  creator: string;
   users: string[];
   invitees: string[];
   skills: string[];
