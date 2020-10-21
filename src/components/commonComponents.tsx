@@ -268,7 +268,7 @@ const StyledLink = styled(Link)`
 type SearchResultsTableProps = {
   userData?: IUser[];
   projectData?: IProject[];
-  dataType: string;
+  dataType: "user" | "project";
 }
 export const SearchResultsTable = (props: SearchResultsTableProps) => {
   const getProjectsHeader = () => {

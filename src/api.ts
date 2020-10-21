@@ -13,6 +13,15 @@ export const getUsers = async (): Promise<AxiosResponse<IUser[]>> => {
   }
 }
 
+export const getUsersByUsernames = async (usernames: string[]): Promise<AxiosResponse<IUser[]>> => {
+  try {
+    const users: AxiosResponse<IUser[]> = await axios.post(baseUrl + "/getUsersByUsernames", {usernames});
+    return users;
+  } catch (error) {
+    throw new Error(error);
+  }
+}
+
 export const getUser = async (username: string): Promise<AxiosResponse<IUser>> => {
   try {
     const user: AxiosResponse<IUser> = await axios.get(baseUrl + "/user/" + username);

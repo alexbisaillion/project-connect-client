@@ -1,9 +1,10 @@
 import React from "react";
 import styled from "styled-components";
-import { getProject } from "../api";
+import { getProject, getUsersByUsernames } from "../api";
 import { RouteComponentProps } from 'react-router-dom'
-import { PageHeader, Attribute, PageContainer, LoadingIndicator, Panel, AttributeList, SkillList } from "./commonComponents";
+import { PageHeader, Attribute, PageContainer, LoadingIndicator, Panel, AttributeList, SkillList, SearchResultsTable } from "./commonComponents";
 import { getDisplayDate } from "../utilities";
+import { Paper } from "@material-ui/core";
 
 const ProjectContainer = styled.div`
   display: flex;
@@ -15,6 +16,36 @@ const ProjectContainer = styled.div`
   }
 `;
 
+const IntroContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  width: 100%;
+  margin-top: 24px;
+`;
+
+const StyledPaper = styled(Paper)`
+  && {
+    padding: 16px;
+    width: 100%;
+  }
+`;
+
+const IntroContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  > * {
+    margin: 8px;
+  }
+`;
+
+const DetailedInfoContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  width: 100%;
+`;
+
 interface ProjectInfo { name: string; }
 
 interface ComponentProps extends RouteComponentProps<ProjectInfo> {}
@@ -22,6 +53,8 @@ interface ComponentProps extends RouteComponentProps<ProjectInfo> {}
 export const Project = (props: ComponentProps) => {
   const { name } = props.match.params;
   const [loadedProject, setLoadedProject] = React.useState<IProject | undefined>(undefined);
+  const [loadedUsers, setLoadedUsers] = React.useState<IUser[]>([]);
+  const [loadedInvitees, setLoadedInvitees] = React.useState<IUser[]>([]);
 
   React.useEffect(() => {
     const fetchProject = async () => {
@@ -31,48 +64,64 @@ export const Project = (props: ComponentProps) => {
     fetchProject();
   }, [name]);
 
+  React.useEffect(() => {
+    const fetchUsers = async (usernames: string[], invitees: string[]) => {
+      if (usernames.length > 0) {
+        const users = await getUsersByUsernames(usernames);
+        setLoadedUsers([...users.data]);  
+      }
+
+      if (invitees.length > 0) {
+        const users = await getUsersByUsernames(invitees);
+        setLoadedInvitees([...users.data]);  
+      }
+    }
+    if (loadedProject) {
+      fetchUsers(loadedProject.users, loadedProject.invitees);
+    }
+  }, [loadedProject]);
+
   const getContent = () => {
     if (!loadedProject) {
       return <LoadingIndicator />
     }
     return (
       <ProjectContainer>
-        <PageHeader textContent={loadedProject.name} />
-        <Panel>
-          <AttributeList title="Basic Information">
-            <Attribute name="Start Date" value={getDisplayDate(loadedProject.startDate)} />
-            {loadedProject.completionDate && 
-              <Attribute name="Completion Date" value={getDisplayDate(loadedProject.completionDate)} />
-            }
-          </AttributeList>
-        </Panel>
-        <Panel>
-          <AttributeList title="People">
-            <AttributeList title="Joined" dense={true}>
-              {loadedProject.users.map((user) => {
-                return <Attribute key={user} value={user} avatar />
-              })}
+        <IntroContainer>
+          <StyledPaper elevation={3}>
+            <IntroContent>
+              <PageHeader textContent={loadedProject.name} />
+              <PageHeader alignment="left" size="subtitle1" textContent={loadedProject.description} />
+            </IntroContent>
+          </StyledPaper>
+        </IntroContainer>
+        <DetailedInfoContainer>
+          <Panel>
+            <AttributeList title="Basic Information">
+              <Attribute name="Start Date" value={getDisplayDate(loadedProject.startDate)} />
+              {loadedProject.completionDate && 
+                <Attribute name="Completion Date" value={getDisplayDate(loadedProject.completionDate)} />
+              }
             </AttributeList>
-            <AttributeList title="Invited" dense={true}>
-              {loadedProject.invitees.map((user) => {
-                return <Attribute key={user} value={user} avatar />
-              })}
+          </Panel>
+          <Panel>
+            <AttributeList title="Skills">
+              <AttributeList title="Basic" dense={true}>
+                <SkillList skills={loadedProject.skills} />
+              </AttributeList>
+              <AttributeList title="Programming Languages" dense={true}>
+                <SkillList skills={loadedProject.programmingLanguages} />
+              </AttributeList>
+              <AttributeList title="Frameworks" dense={true}>
+                <SkillList skills={loadedProject.frameworks} />
+              </AttributeList>
             </AttributeList>
-          </AttributeList>
-        </Panel>
-        <Panel>
-          <AttributeList title="Skills">
-            <AttributeList title="Basic" dense={true}>
-              <SkillList skills={loadedProject.skills} />
-            </AttributeList>
-            <AttributeList title="Programming Languages" dense={true}>
-              <SkillList skills={loadedProject.programmingLanguages} />
-            </AttributeList>
-            <AttributeList title="Frameworks" dense={true}>
-              <SkillList skills={loadedProject.frameworks} />
-            </AttributeList>
-          </AttributeList>
-        </Panel>
+          </Panel>
+        </DetailedInfoContainer>
+        <PageHeader size="h5" textContent={"Members"} />
+        <SearchResultsTable userData={loadedUsers} dataType="user" />
+        <PageHeader size="h5" textContent={"Invitees"} />
+        <SearchResultsTable userData={loadedInvitees} dataType="user" />
       </ProjectContainer>
     );
   }
