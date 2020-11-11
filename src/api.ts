@@ -143,3 +143,12 @@ export const addProject = async (info: ProjectInfo): Promise<AxiosResponse<Succe
     throw new Error(error);
   }
 }
+
+export const getProjectRecommendationsForUser = async (username: string): Promise<AxiosResponse<ProjectScore[]>> => {
+  try {
+    const result: AxiosResponse<ProjectScore[]> = await axios.get(baseUrl + "/getProjectRecommendationsForUser/" + username);
+    return result;
+  } catch (error) {
+    throw new Error(error);
+  }
+}

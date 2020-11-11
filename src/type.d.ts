@@ -57,3 +57,13 @@ type Skill = {
   name: string;
   votes: number;
 }
+
+type ProjectScore = {
+  project: IProject;
+  score: number;
+}
+
+type UserScore = {
+  user: IUser;
+  score: number;
+}

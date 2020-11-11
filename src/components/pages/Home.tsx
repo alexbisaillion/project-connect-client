@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { getUser } from "../../api";
 import { authenticationManager } from "../../authenticationManager";
 import { LinkButton, LoadingIndicator, PageContainer, PageHeader } from "../commonComponents";
+import { ProjectRecommendations } from "../ProjectRecommendations";
 
 const HomeContainer = styled.div`
   display: flex;
@@ -43,7 +44,10 @@ export const Home = () => {
 
     let content;
     if (currentUser) {
-      content = <PageHeader textContent={"Welcome, " + currentUser.name + "!"} />;
+      content = <>
+        <PageHeader textContent={"Welcome, " + currentUser.name + "!"} />
+        <ProjectRecommendations username={currentUser.username} />
+      </>;
     } else {
       content = <>
         <PageHeader textContent={"Welcome to ProjectConnect!"} />
