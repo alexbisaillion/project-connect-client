@@ -161,3 +161,21 @@ export const requestToJoinProject = async (username: string, project: string): P
     throw new Error(error);
   }
 }
+
+export const getUserRecommendationsForProject = async (project: string): Promise<AxiosResponse<UserScore[]>> => {
+  try {
+    const result: AxiosResponse<UserScore[]> = await axios.get(baseUrl + "/getUserRecommendationsForProject/" + project);
+    return result;
+  } catch (error) {
+    throw new Error(error);
+  }
+}
+
+export const inviteToProject = async (username: string, project: string): Promise<AxiosResponse<IUser>> => {
+  try {
+    const result: AxiosResponse<IUser> = await axios.post(baseUrl + "/inviteToProject", { username, name: project });
+    return result;
+  } catch (error) {
+    throw new Error(error);
+  }
+}

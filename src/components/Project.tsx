@@ -5,6 +5,8 @@ import { RouteComponentProps } from 'react-router-dom'
 import { PageHeader, Attribute, PageContainer, LoadingIndicator, Panel, AttributeList, SkillList, SearchResultsTable } from "./commonComponents";
 import { getDisplayDate } from "../utilities";
 import { Paper } from "@material-ui/core";
+import { UserRecommendations } from "./UserRecommendations";
+import { authenticationManager } from "../authenticationManager";
 
 const ProjectContainer = styled.div`
   display: flex;
@@ -122,6 +124,12 @@ export const Project = (props: ComponentProps) => {
         <SearchResultsTable userData={loadedUsers} dataType="user" />
         <PageHeader size="h5" textContent={"Invitees"} />
         <SearchResultsTable userData={loadedInvitees} dataType="user" />
+        {authenticationManager.getLoggedInUser() === loadedProject.creator &&
+          <>
+            <PageHeader size="h5" textContent={"Recommended Users"} />
+            <UserRecommendations project={loadedProject.name} />
+          </>
+        }
       </ProjectContainer>
     );
   }
