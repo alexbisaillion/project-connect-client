@@ -106,6 +106,7 @@ export const Project = (props: ComponentProps) => {
         <DetailedInfoContainer>
           <Panel>
             <AttributeList title="Basic Information">
+              <Attribute name="Creator" value={loadedUsers.find(user => user.username === loadedProject.creator)?.name || loadedProject.creator} />
               <Attribute name="Start Date" value={getDisplayDate(loadedProject.startDate)} />
               {loadedProject.completionDate && 
                 <Attribute name="Completion Date" value={getDisplayDate(loadedProject.completionDate)} />
