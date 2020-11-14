@@ -155,15 +155,15 @@ export const User = (props: ComponentProps) => {
             <SearchResultsTable projectData={loadedProjects} dataType="project" />
           </>
         }
-        {loadedInvites.length > 0 &&
+        {authenticationManager.getLoggedInUser() === loadedUser.username && loadedInvites.length > 0 &&
           <>
             <PageHeader size="h5" textContent={"Incoming Invitations"} />
             <SearchResultsTable projectData={loadedInvites} dataType="project" />
           </>
         }
-        {loadedRequests.length > 0 &&
+        {authenticationManager.getLoggedInUser() === loadedUser.username && loadedRequests.length > 0 &&
           <>
-            <PageHeader size="h5" textContent={"Outstanding Requests"} />
+            <PageHeader size="h5" textContent={"Outgoing Join Requests"} />
             <SearchResultsTable projectData={loadedRequests} dataType="project" />
           </>
         }

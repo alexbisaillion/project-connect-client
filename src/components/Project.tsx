@@ -132,15 +132,15 @@ export const Project = (props: ComponentProps) => {
             <SearchResultsTable userData={loadedUsers} dataType="user" />
           </>
         }
-        {loadedInvitees.length > 0 &&
+        {authenticationManager.getLoggedInUser() === loadedProject.creator && loadedInvitees.length > 0 &&
           <>
-            <PageHeader size="h5" textContent={"Invitees"} />
+            <PageHeader size="h5" textContent={"Outgoing Invitations"} />
             <SearchResultsTable userData={loadedInvitees} dataType="user" />
           </>
         }
-        {loadedRequests.length > 0 &&
+        {authenticationManager.getLoggedInUser() === loadedProject.creator && loadedRequests.length > 0 &&
           <>
-            <PageHeader size="h5" textContent={"Requests To Join"} />
+            <PageHeader size="h5" textContent={"Incoming Join Requests"} />
             <SearchResultsTable userData={loadedRequests} dataType="user" />
           </>
         }
