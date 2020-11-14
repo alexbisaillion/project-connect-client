@@ -1,8 +1,9 @@
 interface IUser {
-  _id: string
-  name: string
-  projects: string[],
-  invitations: string[],
+  _id: string;
+  name: string;
+  projects: string[];
+  invitations: string[];
+  requests: string[];
   username: string;
   age: number;
   region: string;
@@ -14,15 +15,16 @@ interface IUser {
   programmingLanguages: Skill[];
   frameworks: Skill[];
   bio: string;
-  __v: number
+  __v: number;
 }
 
 interface IProject {
-  _id: string
+  _id: string;
   name: string;
   creator: string;
   users: string[];
   invitees: string[];
+  requests: string[];
   skills: string[];
   programmingLanguages: string[];
   frameworks: string[];
@@ -30,7 +32,7 @@ interface IProject {
   isInProgress: boolean;
   completionDate?: string;
   description: string;
-  __v: number
+  __v: number;
 }
 
 interface IIsLoggedIn {

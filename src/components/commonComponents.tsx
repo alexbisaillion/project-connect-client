@@ -1,12 +1,12 @@
 import React from "react";
 import styled from "styled-components";
-import { Avatar, Button, Chip, CircularProgress, Container, CssBaseline, IconButton, InputAdornment, List, ListItem, ListItemAvatar, ListItemText, Paper, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography } from "@material-ui/core";
+import { Avatar, Button, Chip, CircularProgress, Container, CssBaseline, IconButton, InputAdornment, LinearProgress, List, ListItem, ListItemAvatar, ListItemText, Paper, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography } from "@material-ui/core";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import { Link } from "react-router-dom";
 import PersonIcon from '@material-ui/icons/Person';
 import AccountTreeIcon from '@material-ui/icons/AccountTree';
 import SearchIcon from '@material-ui/icons/Search';
-import { getDisplayDate } from "../utilities";
+import { getDisplayDate, convertPercentageToColour } from "../utilities";
 
 type PageContainerProps = {
   children: React.ReactNode;
@@ -195,6 +195,7 @@ export const TextControl = (props: TextControlProps) => {
 type ApplyButtonProps = {
   name: string;
   onApply: () => void;
+  disabled?: boolean;
 }
 export const ApplyButton = (props: ApplyButtonProps) => {
   return (
@@ -203,6 +204,7 @@ export const ApplyButton = (props: ApplyButtonProps) => {
       variant="contained"
       color="primary"
       onClick={props.onApply}
+      disabled={props.disabled}
     >
       {props.name}
     </Button>
@@ -262,12 +264,13 @@ export const SearchControl = (props: SearchControlProps) => {
 
 // Material ui TableCell component prop does not work with react router Link component
 // Incompatible props...
-const StyledLink = styled(Link)`
+export const StyledLink = styled(Link)`
   color: white
 `;
 type SearchResultsTableProps = {
   userData?: IUser[];
   projectData?: IProject[];
+  detailDialog?: () => JSX.Element;
   dataType: "user" | "project";
 }
 export const SearchResultsTable = (props: SearchResultsTableProps) => {
@@ -275,6 +278,9 @@ export const SearchResultsTable = (props: SearchResultsTableProps) => {
     return (
       <TableHead>
         <TableRow>
+          {props.detailDialog && 
+            <TableCell align="right">Details</TableCell>
+          }
           {["Name", "Creator", "Start Date", "In Progress"].map(header => {
             return (
               <TableCell key={header} align="right">{header}</TableCell>
@@ -388,5 +394,26 @@ export const UserAvatar = (props: UserAvatarProps) => {
   const initial = names[0].charAt(0) + (names[1] !== undefined ? names[1].charAt(0) : "");
   return (
     <StyledUserAvatar>{initial}</StyledUserAvatar>
+  );
+}
+
+const StyledLinearProgress = styled(LinearProgress)<CompatibilityBarProps>`
+  & {
+    background-color: #424242;
+    > .MuiLinearProgress-barColorPrimary {
+      background-color: ${props => convertPercentageToColour(props.score)};
+    }
+  }
+`
+type CompatibilityBarProps = {
+  score: number;
+}
+export const CompatibilityBar = (props: CompatibilityBarProps) => {
+  return (
+    <StyledLinearProgress
+      variant="determinate"
+      value={props.score * 100}
+      score={props.score}
+    />
   );
 }

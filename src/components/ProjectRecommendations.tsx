@@ -1,7 +1,7 @@
-import { TableHead, TableRow } from "@material-ui/core";
 import React from "react";
 import { getProjectRecommendationsForUser } from "../api";
-import { LoadingIndicator, SearchResultsTable } from './commonComponents';
+import { LoadingIndicator } from './commonComponents';
+import { ProjectRecommendationsTable } from "./ProjectRecommendationsTable";
 
 type Props = {
   username: string;
@@ -22,5 +22,5 @@ export const ProjectRecommendations = ({ username }: Props) => {
   if (isLoading) {
     return <LoadingIndicator />;
   }
-  return <SearchResultsTable projectData={recommendedProjects.slice(0, 10).map(p => p.project)} dataType="project" />
+  return <ProjectRecommendationsTable projectScores={recommendedProjects.slice(0, 10)} username={username} />
 }

@@ -152,3 +152,12 @@ export const getProjectRecommendationsForUser = async (username: string): Promis
     throw new Error(error);
   }
 }
+
+export const requestToJoinProject = async (username: string, project: string): Promise<AxiosResponse<IProject>> => {
+  try {
+    const result: AxiosResponse<IProject> = await axios.post(baseUrl + "/requestToJoinProject", { username, name: project });
+    return result;
+  } catch (error) {
+    throw new Error(error);
+  }
+}
