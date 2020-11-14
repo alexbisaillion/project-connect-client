@@ -4,8 +4,9 @@ import { Button, TextField, Typography, Chip } from "@material-ui/core";
 import { attributeManager } from "../../attributeManager";
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import { register } from "../../api";
-import { PageContainer, PageHeader } from "../commonComponents";
-import { Redirect } from "react-router-dom";
+import { LinkButton, PageContainer, PageHeader } from "../commonComponents";
+import { ProjectRecommendations } from "../ProjectRecommendations";
+import { authenticationManager } from "../../authenticationManager";
 
 const RegisterContainer = styled.div`
   display: flex;
@@ -38,7 +39,7 @@ const SkillBox = styled.div`
 `;
 
 enum RegisterState {
-  BasicInfo, Experience, Skills
+  BasicInfo, Experience, Skills, RecommendProjects
 }
 
 type Position = {
@@ -62,8 +63,6 @@ export const Register = () => {
   const [selectedFrameworks, setSelectedFrameworks] = React.useState<string[]>([]);
 
   const [view, setView] = React.useState<RegisterState>(RegisterState.BasicInfo);
-
-  const [isRegistered, setIsRegistered] = React.useState<boolean>(false);
 
   const renderBasicInformation = () => {
     if (view !== RegisterState.BasicInfo) {
@@ -252,7 +251,7 @@ export const Register = () => {
   }
 
   const attemptRegistration = async () => {
-    const result = await register({
+    const registrationResult = await register({
       username,
       password,
       name: displayName,
@@ -268,24 +267,41 @@ export const Register = () => {
       bio
     });
 
-    if (result.data.success) {
-      setIsRegistered(true);
+    if (registrationResult.data.success) {
+      await authenticationManager.attemptLogIn(username, password);
+      if (authenticationManager.getIsLoggedIn()) {
+        setView(RegisterState.RecommendProjects);
+      }
     }
   }
 
-  const getContent = () => {
-    if (isRegistered) {
-      return <Redirect to="/" />
-    } else {
-      return (
-        <RegisterContainer>
-          <PageHeader textContent="Register" />
-          {renderBasicInformation()}
-          {renderEmploymentInformation()}
-          {renderSkillInformation()}
-        </RegisterContainer>
-      );
+  const renderProjectRecommendations = () => {
+    if (view !== RegisterState.RecommendProjects) {
+      return;
     }
+
+    return (
+      <>
+        <Typography variant="h4">{`Welcome to ProjectConnect, ${displayName}!`}</Typography>
+        <Typography variant="h6">{`To get you started, here are some projects you may be interested in:`}</Typography>
+        <ProjectRecommendations username={username} />
+        <LinkButton link="/createProject" name="Create your own project"></LinkButton>
+        <LinkButton link="/" name="Proceed to homepage"></LinkButton>
+      </>
+    )
+  }
+  const getContent = () => {
+    return (
+      <RegisterContainer>
+        {view !== RegisterState.RecommendProjects &&
+          <PageHeader textContent="Register" />
+        }
+        {renderBasicInformation()}
+        {renderEmploymentInformation()}
+        {renderSkillInformation()}
+        {renderProjectRecommendations()}
+      </RegisterContainer>
+    );
   }
 
   return (
