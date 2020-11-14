@@ -1,9 +1,9 @@
 import React from "react";
-import { Redirect } from "react-router-dom";
 import styled from "styled-components";
 import { addProject } from "../api";
 import { attributeManager } from "../attributeManager";
-import { ApplyButton, AttributeDropdown, PageContainer, PageHeader, SkillList, TextControl } from "./commonComponents";
+import { ApplyButton, AttributeDropdown, LinkButton, PageContainer, PageHeader, SkillList, TextControl } from "./commonComponents";
+import { UserRecommendations } from "./UserRecommendations";
 
 const CreateProjectContainer = styled.div`
   display: flex;
@@ -15,13 +15,18 @@ const CreateProjectContainer = styled.div`
   }
 `;
 
+enum CreateProjectState {
+  Creation, RecommendUsers
+}
+
 export const CreateProject = () => {
   const [projectName, setProjectName] = React.useState<string>("");
   const [description, setDescription] = React.useState<string>("");
   const [selectedSkills, setSelectedSkills] = React.useState<string[]>([]);
   const [selectedProgrammingLanguages, setSelectedProgrammingLanguages] = React.useState<string[]>([]);
   const [selectedFrameworks, setSelectedFrameworks] = React.useState<string[]>([]);
-  const [isCreated, setIsCreated] = React.useState<boolean>(false);
+
+  const [view, setView] = React.useState<CreateProjectState>(CreateProjectState.Creation);
 
   const onApply = async () => {
     const result = await addProject({
@@ -33,68 +38,91 @@ export const CreateProject = () => {
     });
     
     if (result.data.success) {
-      setIsCreated(true);
+      setView(CreateProjectState.RecommendUsers);
     }
   }
 
-  const getContent = () => {
-    if (isCreated) {
-      return <Redirect to={`/project/${projectName}`} />
-    } else {
-      return (
-        <CreateProjectContainer>
-          <PageHeader textContent="Start a new project" />
-          <TextControl name="Project Name" value={projectName} onChange={(newValue: string) => setProjectName(newValue)} />
-          <TextControl large name="Description" value={description} onChange={(newValue: string) => setDescription(newValue)} />
-          <AttributeDropdown
-            name="Basic Skills"
-            options={attributeManager.getSkills()}
-            onChange={(newValue: string) => {
-              if (!selectedSkills.includes(newValue)) {
-                setSelectedSkills([...selectedSkills, newValue]);
-              }
-            }}
-          />          
-          <SkillList
-            skills={selectedSkills}
-            onDelete={(value: string) => {
-              setSelectedSkills(selectedSkills.filter(selectedSkill => selectedSkill !== value));
-            }}
-          />
-          <AttributeDropdown
-            name="Programming Languages"
-            options={attributeManager.getProgrammingLanguages()}
-            onChange={(newValue: string) => {
-              if (!selectedProgrammingLanguages.includes(newValue)) {
-                setSelectedProgrammingLanguages([...selectedProgrammingLanguages, newValue]);
-              }
-            }}
-          />          
-          <SkillList
-            skills={selectedProgrammingLanguages}
-            onDelete={(value: string) => {
-              setSelectedProgrammingLanguages(selectedProgrammingLanguages.filter(selectedProgrammingLanguage => selectedProgrammingLanguage !== value));
-            }}
-          />
-          <AttributeDropdown
-            name="Frameworks"
-            options={attributeManager.getFrameworks()}
-            onChange={(newValue: string) => {
-              if (!selectedFrameworks.includes(newValue)) {
-                setSelectedFrameworks([...selectedFrameworks, newValue]);
-              }
-            }}
-          />          
-          <SkillList
-            skills={selectedFrameworks}
-            onDelete={(value: string) => {
-              setSelectedFrameworks(selectedFrameworks.filter(selectedFramework => selectedFramework !== value));
-            }}
-          />
-          <ApplyButton name="Create Project" onApply={onApply} />
-        </CreateProjectContainer>
-      )
+  const renderCreation = () => {
+    if (view !== CreateProjectState.Creation) {
+      return;
     }
+
+    return (
+      <>
+        <PageHeader textContent="Start a new project" />
+        <TextControl name="Project Name" value={projectName} onChange={(newValue: string) => setProjectName(newValue)} />
+        <TextControl large name="Description" value={description} onChange={(newValue: string) => setDescription(newValue)} />
+        <AttributeDropdown
+          name="Basic Skills"
+          options={attributeManager.getSkills()}
+          onChange={(newValue: string) => {
+            if (!selectedSkills.includes(newValue)) {
+              setSelectedSkills([...selectedSkills, newValue]);
+            }
+          }}
+        />          
+        <SkillList
+          skills={selectedSkills}
+          onDelete={(value: string) => {
+            setSelectedSkills(selectedSkills.filter(selectedSkill => selectedSkill !== value));
+          }}
+        />
+        <AttributeDropdown
+          name="Programming Languages"
+          options={attributeManager.getProgrammingLanguages()}
+          onChange={(newValue: string) => {
+            if (!selectedProgrammingLanguages.includes(newValue)) {
+              setSelectedProgrammingLanguages([...selectedProgrammingLanguages, newValue]);
+            }
+          }}
+        />          
+        <SkillList
+          skills={selectedProgrammingLanguages}
+          onDelete={(value: string) => {
+            setSelectedProgrammingLanguages(selectedProgrammingLanguages.filter(selectedProgrammingLanguage => selectedProgrammingLanguage !== value));
+          }}
+        />
+        <AttributeDropdown
+          name="Frameworks"
+          options={attributeManager.getFrameworks()}
+          onChange={(newValue: string) => {
+            if (!selectedFrameworks.includes(newValue)) {
+              setSelectedFrameworks([...selectedFrameworks, newValue]);
+            }
+          }}
+        />          
+        <SkillList
+          skills={selectedFrameworks}
+          onDelete={(value: string) => {
+            setSelectedFrameworks(selectedFrameworks.filter(selectedFramework => selectedFramework !== value));
+          }}
+        />
+        <ApplyButton name="Create Project" onApply={onApply} />
+      </>
+    );
+  }
+  
+  const renderUserRecommendations = () => {
+    if (view !== CreateProjectState.RecommendUsers) {
+      return;
+    }
+
+    return (
+      <>
+        <PageHeader textContent="To get you started, here are some users that may be interested:" />
+        <UserRecommendations project={projectName} />
+        <LinkButton link={`/project/${projectName}`} name="Proceed to project profile"></LinkButton>
+      </>
+    )
+  }
+
+  const getContent = () => {
+    return (
+      <CreateProjectContainer>
+        {renderCreation()}
+        {renderUserRecommendations()}
+      </CreateProjectContainer>
+    )
   }
 
   return (
