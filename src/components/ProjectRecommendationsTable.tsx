@@ -1,4 +1,5 @@
-import { Paper, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@material-ui/core";
+import { Paper, Snackbar, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@material-ui/core";
+import { Alert } from "@material-ui/lab";
 import React from "react";
 import { requestToJoinProject } from "../api";
 import { ApplyButton, CompatibilityBar, StyledLink } from "./commonComponents";
@@ -10,6 +11,18 @@ type RecommendationsTableProps = {
 export const ProjectRecommendationsTable = (props: RecommendationsTableProps) => {
   const { username } = props;
   const [loadedProjectScores, setLoadedProjectScores] = React.useState<ProjectScore[]>(props.projectScores);
+  const [isSnackbarOpen, setIsSnackbarOpen] = React.useState<boolean>(false);
+  const [isRequestSuccessful, setIsRequestSuccessful] = React.useState<boolean>(false);
+
+  const renderSnackbar = () => {
+    return (
+      <Snackbar open={isSnackbarOpen} autoHideDuration={6000} onClose={() => setIsSnackbarOpen(false)}>
+        <Alert variant="filled" onClose={() => setIsSnackbarOpen(false)} severity={isRequestSuccessful ? "success" : "error"}>
+          {isRequestSuccessful ? "Request sent!" : "Failed to send request." }
+        </Alert>
+      </Snackbar>
+    );
+  }
 
   const sendJoinRequest = async (projectScore: ProjectScore) => {
     const result = await requestToJoinProject(username, projectScore.project.name);
@@ -18,42 +31,50 @@ export const ProjectRecommendationsTable = (props: RecommendationsTableProps) =>
       const projectIndex = loadedProjectScores.indexOf(projectScore);
       if (projectIndex !== -1) {
         loadedProjectScoresCopy[projectIndex] = { project: result.data, score: projectScore.score };
-        setLoadedProjectScores([...loadedProjectScoresCopy]);  
+        setLoadedProjectScores([...loadedProjectScoresCopy]); 
+        setIsRequestSuccessful(true);
+        setIsSnackbarOpen(true);
+        return;
       }
     }
+    setIsRequestSuccessful(false);
+    setIsSnackbarOpen(false); 
   }
 
   return (
-    <TableContainer style={{ width: "auto"}} component={Paper}>
-      <TableHead>
-        <TableRow>
-          {["Name", "Compatibility", "Details", "Options"].map(header => {
+    <>
+      {renderSnackbar()}
+      <TableContainer style={{ width: "auto"}} component={Paper}>
+        <TableHead>
+          <TableRow>
+            {["Name", "Compatibility", "Details", "Options"].map(header => {
+              return (
+                <TableCell key={header} align="right">{header}</TableCell>
+              );
+            })}
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {loadedProjectScores.map((projectScore: ProjectScore) => {
             return (
-              <TableCell key={header} align="right">{header}</TableCell>
-            );
+              <TableRow key={projectScore.project.name}>
+                <TableCell align="right">
+                  <StyledLink to={`/project/${projectScore.project.name}`}>{projectScore.project.name}</StyledLink>
+                </TableCell>
+                <TableCell align="right"><CompatibilityBar score={projectScore.score} /></TableCell>
+                <TableCell align="right"><ApplyButton name="View" onApply={() => {}}/></TableCell>
+                <TableCell align="right">
+                  <ApplyButton
+                    disabled={projectScore.project.requests.includes(username)}
+                    name={projectScore.project.requests.includes(username) ? "Request sent" : "Request to join"}
+                    onApply={() => sendJoinRequest(projectScore)}
+                  />
+                </TableCell>
+              </TableRow>
+            )
           })}
-        </TableRow>
-      </TableHead>
-      <TableBody>
-        {loadedProjectScores.map((projectScore: ProjectScore) => {
-          return (
-            <TableRow key={projectScore.project.name}>
-              <TableCell align="right">
-                <StyledLink to={`/project/${projectScore.project.name}`}>{projectScore.project.name}</StyledLink>
-              </TableCell>
-              <TableCell align="right"><CompatibilityBar score={projectScore.score} /></TableCell>
-              <TableCell align="right"><ApplyButton name="View" onApply={() => {}}/></TableCell>
-              <TableCell align="right">
-                <ApplyButton
-                  disabled={projectScore.project.requests.includes(username)}
-                  name={projectScore.project.requests.includes(username) ? "Request sent" : "Request to join"}
-                  onApply={() => sendJoinRequest(projectScore)}
-                />
-              </TableCell>
-            </TableRow>
-          )
-        })}
-      </TableBody>
-    </TableContainer>
+        </TableBody>
+      </TableContainer>
+    </>
   );
 }
