@@ -188,3 +188,12 @@ export const inviteToProject = async (username: string, project: string): Promis
     throw new Error(error);
   }
 }
+
+export const registerInProject = async (username: string, project: string): Promise<AxiosResponse<IUser>> => {
+  try {
+    const result: AxiosResponse<IUser> = await axios.post(baseUrl + "/registerInProject", { username, name: project });
+    return result;
+  } catch (error) {
+    throw new Error(error);
+  }
+}

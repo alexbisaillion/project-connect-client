@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import { getProject, getProjectsByNames, getUser } from "../api";
+import { getProjectsByNames, getUser, registerInProject } from "../api";
 import { RouteComponentProps } from 'react-router-dom'
 import { PageHeader, Attribute, PageContainer, LoadingIndicator, Panel, AttributeList, WeightedSkillList, UserAvatar, SearchResultsTable } from "./commonComponents";
 import { PositionIcon } from "./icons";
@@ -76,27 +76,43 @@ export const User = (props: ComponentProps) => {
   React.useEffect(() => {
     const fetchProjects = async (registeredProjects: string[], invitedProjects: string[], requestedProjects: string[], ) => {
       if (registeredProjects.length > 0) {
-        console.log(1);
         const projects = await getProjectsByNames(registeredProjects);
         setLoadedProjects([...projects.data]);
+      } else {
+        setLoadedProjects([]);
       }
 
       if (invitedProjects.length > 0) {
-        console.log(2);
         const projects = await getProjectsByNames(invitedProjects);
         setLoadedInvites([...projects.data]);
+      } else {
+        setLoadedInvites([]);
       }
 
       if (requestedProjects.length > 0) {
-        console.log(3);
         const projects = await getProjectsByNames(requestedProjects);
         setLoadedRequests([...projects.data]);
+      } else {
+        setLoadedRequests([]);
       }
     }
     if (loadedUser) {
       fetchProjects(loadedUser.projects, loadedUser.invitations, loadedUser.requests);
     }
   }, [loadedUser]);
+
+  const acceptInvitation = async (projectName: string): Promise<boolean> => {
+    if (!loadedUser) {
+      return false;
+    }
+    const result = await registerInProject(loadedUser.username, projectName);
+
+    if (result.data) {
+      setLoadedUser(result.data);
+      return true;
+    }
+    return false;
+  }
 
   const getContent = () => {
     if (!loadedUser) {
@@ -158,7 +174,18 @@ export const User = (props: ComponentProps) => {
         {authenticationManager.getLoggedInUser() === loadedUser.username && loadedInvites.length > 0 &&
           <>
             <PageHeader size="h5" textContent={"Incoming Invitations"} />
-            <SearchResultsTable projectData={loadedInvites} dataType="project" />
+            <SearchResultsTable
+              projectData={loadedInvites}
+              dataType="project"
+              action={{
+                action: acceptInvitation,
+                checkDisabled: (projectName: string) => !loadedUser.invitations.includes(projectName),
+                enabledButtonLabel: "Accept",
+                disabledButtonLabel: "Accepted",
+                successMessage: "Invitation accepted!",
+                failureMessage: "Failed to accept invitation."
+              }}
+            />
           </>
         }
         {authenticationManager.getLoggedInUser() === loadedUser.username && loadedRequests.length > 0 &&

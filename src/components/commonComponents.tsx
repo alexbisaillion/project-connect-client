@@ -1,12 +1,13 @@
 import React from "react";
 import styled from "styled-components";
-import { Avatar, Button, Chip, CircularProgress, Container, CssBaseline, IconButton, InputAdornment, LinearProgress, List, ListItem, ListItemAvatar, ListItemText, Paper, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography } from "@material-ui/core";
+import { Avatar, Button, Chip, CircularProgress, Container, CssBaseline, IconButton, InputAdornment, LinearProgress, List, ListItem, ListItemAvatar, ListItemText, Paper, Snackbar, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography } from "@material-ui/core";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import { Link } from "react-router-dom";
 import PersonIcon from '@material-ui/icons/Person';
 import AccountTreeIcon from '@material-ui/icons/AccountTree';
 import SearchIcon from '@material-ui/icons/Search';
 import { getDisplayDate, convertPercentageToColour } from "../utilities";
+import { Alert } from "@material-ui/lab";
 
 type PageContainerProps = {
   children: React.ReactNode;
@@ -267,25 +268,58 @@ export const SearchControl = (props: SearchControlProps) => {
 export const StyledLink = styled(Link)`
   color: white
 `;
+type ItemAction = {
+  action: (item: string) => Promise<boolean>;
+  checkDisabled: (item: string) => boolean;
+  enabledButtonLabel: string;
+  disabledButtonLabel: string;
+  successMessage: string;
+  failureMessage: string;
+}
 type SearchResultsTableProps = {
   userData?: IUser[];
   projectData?: IProject[];
-  detailDialog?: () => JSX.Element;
   dataType: "user" | "project";
+  action?: ItemAction;
 }
 export const SearchResultsTable = (props: SearchResultsTableProps) => {
+  const [isSnackbarOpen, setIsSnackbarOpen] = React.useState<boolean>(false);
+  const [isActionSuccessful, setIsActionSuccessful] = React.useState<boolean>(false);
+
+  const executeAction = async (item: string) => {
+    if (!props.action) {
+      return;
+    }
+    const result = await props.action.action(item);
+    setIsSnackbarOpen(true);
+    setIsActionSuccessful(result);
+  }
+
+  const renderSnackbar = () => {
+    if (!props.action) {
+      return;
+    }
+    return (
+      <Snackbar open={isSnackbarOpen} autoHideDuration={6000} onClose={() => setIsSnackbarOpen(false)}>
+        <Alert variant="filled" onClose={() => setIsSnackbarOpen(false)} severity={isActionSuccessful ? "success" : "error"}>
+          {isActionSuccessful ? props.action.successMessage : props.action.failureMessage }
+        </Alert>
+      </Snackbar>
+    );
+  }
+
   const getProjectsHeader = () => {
     return (
       <TableHead>
         <TableRow>
-          {props.detailDialog && 
-            <TableCell align="right">Details</TableCell>
-          }
           {["Name", "Creator", "Start Date", "In Progress"].map(header => {
             return (
               <TableCell key={header} align="right">{header}</TableCell>
             );
           })}
+          {props.action &&
+            <TableCell align="right">Action</TableCell>
+          }
         </TableRow>
       </TableHead>
     );
@@ -307,6 +341,15 @@ export const SearchResultsTable = (props: SearchResultsTableProps) => {
                     <TableCell align="right" key={project.name + "-" + attribute}>{attribute}</TableCell>
                   );
               })}
+              {props.action &&
+                <TableCell align="right">
+                  <ApplyButton
+                    disabled={props.action.checkDisabled(project.name)}
+                    name={props.action.checkDisabled(project.name) ? props.action.disabledButtonLabel : props.action.enabledButtonLabel}
+                    onApply={() => executeAction(project.name)}
+                  />
+                </TableCell>
+              }
             </TableRow>
           )
         })}
@@ -370,9 +413,12 @@ export const SearchResultsTable = (props: SearchResultsTableProps) => {
   }
 
   return (
-    <TableContainer style={{ width: "auto"}} component={Paper}>
-      {getContent()}
-    </TableContainer>
+    <>
+      {renderSnackbar()}
+      <TableContainer style={{ width: "auto"}} component={Paper}>
+        {getContent()}
+      </TableContainer>
+    </>
   );
 }
 
