@@ -57,6 +57,7 @@ export const Project = (props: ComponentProps) => {
   const [loadedProject, setLoadedProject] = React.useState<IProject | undefined>(undefined);
   const [loadedUsers, setLoadedUsers] = React.useState<IUser[]>([]);
   const [loadedInvitees, setLoadedInvitees] = React.useState<IUser[]>([]);
+  const [loadedRequests, setLoadedRequests] = React.useState<IUser[]>([]);
 
   React.useEffect(() => {
     const fetchProject = async () => {
@@ -67,7 +68,7 @@ export const Project = (props: ComponentProps) => {
   }, [name]);
 
   React.useEffect(() => {
-    const fetchUsers = async (usernames: string[], invitees: string[]) => {
+    const fetchUsers = async (usernames: string[], invitees: string[], requests: string[]) => {
       if (usernames.length > 0) {
         const users = await getUsersByUsernames(usernames);
         setLoadedUsers([...users.data]);  
@@ -77,9 +78,14 @@ export const Project = (props: ComponentProps) => {
         const users = await getUsersByUsernames(invitees);
         setLoadedInvitees([...users.data]);  
       }
+
+      if (requests.length > 0) {
+        const users = await getUsersByUsernames(requests);
+        setLoadedRequests([...users.data]);
+      }
     }
     if (loadedProject) {
-      fetchUsers(loadedProject.users, loadedProject.invitees);
+      fetchUsers(loadedProject.users, loadedProject.invitees, loadedProject.requests);
     }
   }, [loadedProject]);
 
@@ -120,10 +126,24 @@ export const Project = (props: ComponentProps) => {
             </AttributeList>
           </Panel>
         </DetailedInfoContainer>
-        <PageHeader size="h5" textContent={"Members"} />
-        <SearchResultsTable userData={loadedUsers} dataType="user" />
-        <PageHeader size="h5" textContent={"Invitees"} />
-        <SearchResultsTable userData={loadedInvitees} dataType="user" />
+        {loadedUsers.length > 0 &&
+          <>
+            <PageHeader size="h5" textContent={"Members"} />
+            <SearchResultsTable userData={loadedUsers} dataType="user" />
+          </>
+        }
+        {loadedInvitees.length > 0 &&
+          <>
+            <PageHeader size="h5" textContent={"Invitees"} />
+            <SearchResultsTable userData={loadedInvitees} dataType="user" />
+          </>
+        }
+        {loadedRequests.length > 0 &&
+          <>
+            <PageHeader size="h5" textContent={"Requests To Join"} />
+            <SearchResultsTable userData={loadedRequests} dataType="user" />
+          </>
+        }
         {authenticationManager.getLoggedInUser() === loadedProject.creator &&
           <>
             <PageHeader size="h5" textContent={"Recommended Users"} />
