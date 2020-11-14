@@ -366,6 +366,9 @@ export const SearchResultsTable = (props: SearchResultsTableProps) => {
               <TableCell key={header} align="right">{header}</TableCell>
             );
           })}
+          {props.action &&
+            <TableCell align="right">Action</TableCell>
+          }
         </TableRow>
       </TableHead>
     )
@@ -388,6 +391,15 @@ export const SearchResultsTable = (props: SearchResultsTableProps) => {
                     <TableCell align="right" key={user.username + "-" + attribute}>{attribute}</TableCell>
                   );
               })}
+              {props.action &&
+                <TableCell align="right">
+                  <ApplyButton
+                    disabled={props.action.checkDisabled(user.username)}
+                    name={props.action.checkDisabled(user.username) ? props.action.disabledButtonLabel : props.action.enabledButtonLabel}
+                    onApply={() => executeAction(user.username)}
+                  />
+                </TableCell>
+              }
             </TableRow>
           )
         })}

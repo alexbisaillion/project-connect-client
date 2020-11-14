@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import { getProject, getUsersByUsernames } from "../api";
+import { acceptRequest, getProject, getUsersByUsernames } from "../api";
 import { RouteComponentProps } from 'react-router-dom'
 import { PageHeader, Attribute, PageContainer, LoadingIndicator, Panel, AttributeList, SkillList, SearchResultsTable } from "./commonComponents";
 import { getDisplayDate } from "../utilities";
@@ -72,22 +72,41 @@ export const Project = (props: ComponentProps) => {
       if (usernames.length > 0) {
         const users = await getUsersByUsernames(usernames);
         setLoadedUsers([...users.data]);  
+      } else {
+        setLoadedUsers([]);
       }
 
       if (invitees.length > 0) {
         const users = await getUsersByUsernames(invitees);
         setLoadedInvitees([...users.data]);  
+      } else {
+        setLoadedInvitees([])
       }
 
       if (requests.length > 0) {
         const users = await getUsersByUsernames(requests);
         setLoadedRequests([...users.data]);
+      } else {
+        setLoadedRequests([]);
       }
     }
     if (loadedProject) {
       fetchUsers(loadedProject.users, loadedProject.invitees, loadedProject.requests);
     }
   }, [loadedProject]);
+
+  const acceptJoinRequest = async (username: string): Promise<boolean> => {
+    if (!loadedProject) {
+      return false;
+    }
+    const result = await acceptRequest(username, loadedProject.name);
+
+    if (result.data) {
+      setLoadedProject(result.data);
+      return true;
+    }
+    return false;
+  }
 
   const getContent = () => {
     if (!loadedProject) {
@@ -142,7 +161,18 @@ export const Project = (props: ComponentProps) => {
         {authenticationManager.getLoggedInUser() === loadedProject.creator && loadedRequests.length > 0 &&
           <>
             <PageHeader size="h5" textContent={"Incoming Join Requests"} />
-            <SearchResultsTable userData={loadedRequests} dataType="user" />
+            <SearchResultsTable
+              userData={loadedRequests}
+              dataType="user"
+              action={{
+                action: acceptJoinRequest,
+                checkDisabled: (username: string) => !loadedProject.requests.includes(username),
+                enabledButtonLabel: "Accept",
+                disabledButtonLabel: "Accepted",
+                successMessage: "Join request accepted!",
+                failureMessage: "Failed to accept join request."
+              }}
+            />
           </>
         }
         {authenticationManager.getLoggedInUser() === loadedProject.creator &&

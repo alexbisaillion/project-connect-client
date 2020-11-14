@@ -197,3 +197,13 @@ export const registerInProject = async (username: string, project: string): Prom
     throw new Error(error);
   }
 }
+
+export const acceptRequest = async (username: string, project: string): Promise<AxiosResponse<IProject>> => {
+  try {
+    // This returns the project so that the page can be re-rendered.
+    const result: AxiosResponse<IProject> = await axios.post(baseUrl + "/acceptRequest", { username, name: project });
+    return result;
+  } catch (error) {
+    throw new Error(error);
+  }
+}
