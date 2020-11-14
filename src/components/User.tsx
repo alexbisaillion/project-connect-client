@@ -1,10 +1,12 @@
 import React from "react";
 import styled from "styled-components";
-import { getProject, getUser } from "../api";
+import { getProject, getProjectsByNames, getUser } from "../api";
 import { RouteComponentProps } from 'react-router-dom'
 import { PageHeader, Attribute, PageContainer, LoadingIndicator, Panel, AttributeList, WeightedSkillList, UserAvatar, SearchResultsTable } from "./commonComponents";
 import { PositionIcon } from "./icons";
 import { Paper } from "@material-ui/core";
+import { ProjectRecommendations } from "./ProjectRecommendations";
+import { authenticationManager } from "../authenticationManager";
 
 const UserContainer = styled.div`
   display: flex;
@@ -60,6 +62,8 @@ export const User = (props: ComponentProps) => {
   const { username } = props.match.params;
   const [loadedUser, setLoadedUser] = React.useState<IUser | undefined>(undefined);
   const [loadedProjects, setLoadedProjects] = React.useState<IProject[]>([]);
+  const [loadedInvites, setLoadedInvites] = React.useState<IProject[]>([]);
+  const [loadedRequests, setLoadedRequests] = React.useState<IProject[]>([]);
 
   React.useEffect(() => {
     const fetchUser = async () => {
@@ -70,16 +74,27 @@ export const User = (props: ComponentProps) => {
   }, [username]);
 
   React.useEffect(() => {
-    const fetchProjects = async (names: string[]) => {
-      const projects: IProject[] = [];
-      for (const name of names) {
-        const fetchedProject = await getProject(name);
-        projects.push(fetchedProject.data);
+    const fetchProjects = async (registeredProjects: string[], invitedProjects: string[], requestedProjects: string[], ) => {
+      if (registeredProjects.length > 0) {
+        console.log(1);
+        const projects = await getProjectsByNames(registeredProjects);
+        setLoadedProjects([...projects.data]);
       }
-      setLoadedProjects([...projects]);
+
+      if (invitedProjects.length > 0) {
+        console.log(2);
+        const projects = await getProjectsByNames(invitedProjects);
+        setLoadedInvites([...projects.data]);
+      }
+
+      if (requestedProjects.length > 0) {
+        console.log(3);
+        const projects = await getProjectsByNames(requestedProjects);
+        setLoadedRequests([...projects.data]);
+      }
     }
-    if (loadedUser && loadedUser.projects) {
-      fetchProjects(loadedUser.projects);
+    if (loadedUser) {
+      fetchProjects(loadedUser.projects, loadedUser.invitations, loadedUser.requests);
     }
   }, [loadedUser]);
 
@@ -134,7 +149,30 @@ export const User = (props: ComponentProps) => {
             </AttributeList>
           </Panel>
         </DetailedInfoContainer>
-        <SearchResultsTable projectData={loadedProjects} dataType="project" />
+        {loadedProjects.length > 0 &&
+          <>
+            <PageHeader size="h5" textContent={"Registered Projects"} />
+            <SearchResultsTable projectData={loadedProjects} dataType="project" />
+          </>
+        }
+        {loadedInvites.length > 0 &&
+          <>
+            <PageHeader size="h5" textContent={"Incoming Invitations"} />
+            <SearchResultsTable projectData={loadedInvites} dataType="project" />
+          </>
+        }
+        {loadedRequests.length > 0 &&
+          <>
+            <PageHeader size="h5" textContent={"Outstanding Requests"} />
+            <SearchResultsTable projectData={loadedRequests} dataType="project" />
+          </>
+        }
+        {authenticationManager.getLoggedInUser() === loadedUser.username &&
+          <>
+            <PageHeader size="h5" textContent={"Recommended Projects"} />
+            <ProjectRecommendations username={loadedUser.username} />
+          </>
+        }
       </UserContainer>
     );
   }

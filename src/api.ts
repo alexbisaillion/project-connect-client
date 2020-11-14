@@ -118,6 +118,15 @@ export const getProject = async (name: string): Promise<AxiosResponse<IProject>>
   }
 }
 
+export const getProjectsByNames = async (names: string[]): Promise<AxiosResponse<IProject[]>> => {
+  try {
+    const projects: AxiosResponse<IProject[]> = await axios.post(baseUrl + "/getProjectsByNames", { names });
+    return projects;
+  } catch (error) {
+    throw new Error(error);
+  }
+}
+
 export const getProjects = async (): Promise<AxiosResponse<IProject[]>> => {
   try {
     const projects: AxiosResponse<IProject[]> = await axios.get(baseUrl + "/projects");
