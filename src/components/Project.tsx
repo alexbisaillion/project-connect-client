@@ -175,7 +175,7 @@ export const Project = (props: ComponentProps) => {
             />
           </>
         }
-        {authenticationManager.getLoggedInUser() === loadedProject.creator &&
+        {authenticationManager.getLoggedInUser() === loadedProject.creator && loadedProject.isInProgress &&
           <>
             <PageHeader size="h5" textContent={"Recommended Users"} />
             <UserRecommendations project={loadedProject.name} />

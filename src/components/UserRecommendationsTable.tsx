@@ -3,6 +3,7 @@ import { Alert } from "@material-ui/lab";
 import React from "react";
 import { inviteToProject } from "../api";
 import { ApplyButton, CompatibilityBar, StyledLink } from "./commonComponents";
+import { CompatibilityDialog } from "./CompatibilityDialog";
 
 type ProjectRecommendationsTableProps = {
   userScores: UserScore[];
@@ -13,6 +14,8 @@ export const UserRecommendationsTable = (props: ProjectRecommendationsTableProps
   const [loadedUserScores, setLoadedUserScores] = React.useState<UserScore[]>(props.userScores);
   const [isSnackbarOpen, setIsSnackbarOpen] = React.useState<boolean>(false);
   const [isRequestSuccessful, setIsRequestSuccessful] = React.useState<boolean>(false);
+  const [isDialogOpen, setIsDialogOpen] = React.useState<boolean>(false);
+  const [selectedUser, setSelectedUser] = React.useState<UserScore | undefined>();
 
   const renderSnackbar = () => {
     return (
@@ -44,6 +47,15 @@ export const UserRecommendationsTable = (props: ProjectRecommendationsTableProps
   return (
     <>
       {renderSnackbar()}
+      {selectedUser &&
+        <CompatibilityDialog
+          onClose={() => setIsDialogOpen(false)}
+          open={isDialogOpen}
+          project={project}
+          username={selectedUser.user.username}
+          score={selectedUser.score}
+        />
+      }
       <TableContainer style={{ width: "auto"}} component={Paper}>
         <TableHead>
           <TableRow>
@@ -62,7 +74,15 @@ export const UserRecommendationsTable = (props: ProjectRecommendationsTableProps
                   <StyledLink to={`/user/${userScore.user.username}`}>{userScore.user.name}</StyledLink>
                 </TableCell>
                 <TableCell align="right"><CompatibilityBar score={userScore.score} /></TableCell>
-                <TableCell align="right"><ApplyButton name="View" onApply={() => {}}/></TableCell>
+                <TableCell align="right">
+                  <ApplyButton
+                    name="View"
+                    onApply={() => {
+                      setSelectedUser(userScore);
+                      setIsDialogOpen(true);
+                    }}
+                  />
+                </TableCell>
                 <TableCell align="right">
                   <ApplyButton
                     disabled={userScore.user.invitations.includes(project)}
