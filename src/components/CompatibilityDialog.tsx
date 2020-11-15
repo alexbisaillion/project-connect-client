@@ -1,17 +1,41 @@
-import { Dialog, DialogContent, DialogTitle, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@material-ui/core";
+import { Chip, Dialog, DialogContent, DialogTitle, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from "@material-ui/core";
 import React from "react";
 import styled from "styled-components";
-import { getProject, getUser } from "../api";
+import { getProject, getUser, getUsersByUsernames } from "../api";
+
+// Copied from server
+const getMostCommonAttribute = (attributes: string[]) => attributes.sort(
+  (a, b) => attributes.filter(v => v === a).length - attributes.filter(v => v === b).length
+).pop();
+
+// Copied from server
+const getAverageAttribute = (attributes: number[]) => attributes.reduce((a, b) => (a + b)) / attributes.length;
 
 const TableRowContainer = styled.div`
   display: flex;
   flex-direction: row;
   width: 100%;
   justify-content: space-around;
+  margin-bottom: 16px;
+`;
+
+const AttributeBox = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`;
+
+const RowContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  && > * {
+    margin: 4px;
+  }
 `;
 
 const StyledTableCell = styled(TableCell)`
-  & {
+  && {
     padding: 8px;
   }
 `;
@@ -27,6 +51,7 @@ export const CompatibilityDialog = (props: CompatibilityDialogProps) => {
   const { open, onClose, username, project } = props;
   const [loadedUser, setLoadedUser] = React.useState<IUser>();
   const [loadedProject, setLoadedProject] = React.useState<IProject>();
+  const [projectUsers, setProjectUsers] = React.useState<IUser[]>([]);
 
   React.useEffect(() => {
     const fetchUser = async () => {
@@ -44,6 +69,20 @@ export const CompatibilityDialog = (props: CompatibilityDialogProps) => {
     fetchProject();
   }, [project]);
 
+  React.useEffect(() => {
+    const fetchUsers = async (usernames: string[]) => {
+      if (usernames.length > 0) {
+        const users = await getUsersByUsernames(usernames);
+        setProjectUsers([...users.data]);  
+      } else {
+        setProjectUsers([]);
+      }
+    }
+    if (loadedProject) {
+      fetchUsers(loadedProject.users);
+    } 
+  }, [loadedProject]);
+  
   const renderInterestsTable = () => {
     if (!loadedUser || !loadedProject) {
       return;
@@ -101,6 +140,128 @@ export const CompatibilityDialog = (props: CompatibilityDialogProps) => {
     );
   }
 
+  const renderEducationSimilarity = () => {
+    if (!loadedUser || !loadedProject || projectUsers.length < 1) {
+      return;
+    }
+    const mostCommonEducation = getMostCommonAttribute(projectUsers.map(user => user.education));
+
+    return (
+      <AttributeBox>
+        <Typography>Education</Typography>
+        <Typography>{loadedUser.education === mostCommonEducation ? "✔️" : "❌"}</Typography>
+        <RowContainer>
+          <Typography>{`${loadedProject.name}:`}</Typography>
+          <Chip label={mostCommonEducation} color="primary" />
+        </RowContainer>
+        <RowContainer>
+          <Typography>{`${loadedUser.name}:`}</Typography>
+          <Chip label={loadedUser.education} color={loadedUser.education === mostCommonEducation ? "primary" : "secondary"} />
+        </RowContainer>
+      </AttributeBox>
+    );
+  }
+
+  const renderRegionSimilarity = () => {
+    if (!loadedUser || !loadedProject || projectUsers.length < 1) {
+      return;
+    }
+    const mostCommonRegion = getMostCommonAttribute(projectUsers.map(user => user.region));
+
+    return (
+      <AttributeBox>
+        <Typography>Region</Typography>
+        <Typography>{loadedUser.region === mostCommonRegion ? "✔️" : "❌"}</Typography>
+        <RowContainer>
+          <Typography>{`${loadedProject.name}:`}</Typography>
+          <Chip label={mostCommonRegion} color="primary" />
+        </RowContainer>
+        <RowContainer>
+          <Typography>{`${loadedUser.name}:`}</Typography>
+          <Chip label={loadedUser.region} color={loadedUser.region === mostCommonRegion ? "primary" : "secondary"} />
+        </RowContainer>
+      </AttributeBox>
+    );
+  }
+
+  const renderIndustrySimilarity = () => {
+    if (!loadedUser || !loadedProject || projectUsers.length < 1) {
+      return;
+    }
+    const mostCommonIndustry = getMostCommonAttribute(projectUsers.map(user => user.industry));
+
+    return (
+      <AttributeBox>
+        <Typography>Industry</Typography>
+        <Typography>{loadedUser.industry === mostCommonIndustry ? "✔️" : "❌"}</Typography>
+        <RowContainer>
+          <Typography>{`${loadedProject.name}:`}</Typography>
+          <Chip label={mostCommonIndustry} color="primary" />
+        </RowContainer>
+        <RowContainer>
+          <Typography>{`${loadedUser.name}:`}</Typography>
+          <Chip label={loadedUser.industry} color={loadedUser.industry === mostCommonIndustry ? "primary" : "secondary"} />
+        </RowContainer>
+      </AttributeBox>
+    );
+  }
+
+  const renderAgeSimilarity = () => {
+    if (!loadedUser || !loadedProject || projectUsers.length < 1) {
+      return;
+    }
+    const averageAge = getAverageAttribute(projectUsers.map(user => user.age));
+
+    return (
+      <AttributeBox>
+        <Typography>Age Similarity</Typography>
+        <Typography>{`${(Math.min(averageAge, loadedUser.age) / Math.max(averageAge, loadedUser.age) * 100).toFixed(2)}%`}</Typography>
+      </AttributeBox>
+    );
+  }
+
+  const renderCompanySimilarity = () => {
+    if (!loadedUser || !loadedProject || projectUsers.length < 1) {
+      return;
+    }
+
+    const userCompanies: string[] = [loadedUser.currentEmployment.company];
+    for (const pastEmployment of loadedUser.pastEmployment) {
+      if (!userCompanies.includes(pastEmployment.company)) {
+        userCompanies.push(pastEmployment.company);
+      }
+    }
+
+    const commonCompanies: string[] = [];
+    for (const otherUser of projectUsers) {
+      if (userCompanies.includes(otherUser.currentEmployment.company) && !commonCompanies.includes(otherUser.currentEmployment.company)) {
+        commonCompanies.push(otherUser.currentEmployment.company);
+      }
+      for (const pastEmployment of otherUser.pastEmployment) {
+        if (userCompanies.includes(pastEmployment.company) && !commonCompanies.includes(pastEmployment.company)) {
+          commonCompanies.push(pastEmployment.company);
+        }
+      }
+    }
+    
+    return (
+      <AttributeBox>
+        <Typography>Common Companies</Typography>
+        <RowContainer>
+          {commonCompanies.map(company => {
+            return (
+              <Chip
+                key={company}
+                label={company}
+                color="primary"
+              />
+            )
+          })}
+        </RowContainer>
+      </AttributeBox>
+    );
+  }
+
   return (
     <Dialog onClose={onClose} open={open} fullWidth maxWidth="lg">
       <DialogTitle>Compatibility Details</DialogTitle>
@@ -109,6 +270,15 @@ export const CompatibilityDialog = (props: CompatibilityDialogProps) => {
           {renderInterestsTable()}
           {renderProgrammingLanguagesTable()}
           {renderFrameworksTable()}
+        </TableRowContainer>
+        <TableRowContainer>
+          {renderEducationSimilarity()}
+          {renderRegionSimilarity()}
+          {renderIndustrySimilarity()}
+        </TableRowContainer>
+        <TableRowContainer>
+          {renderAgeSimilarity()}
+          {renderCompanySimilarity()}
         </TableRowContainer>
       </DialogContent>
     </Dialog>
@@ -138,7 +308,7 @@ const CompatibilityTable = (props: CompatibilityTableProps) => {
         {rows.map(attribute => {
           return (
             <TableRow>
-              <StyledTableCell>{attribute}</StyledTableCell>
+              <StyledTableCell><Chip label={attribute} color="primary" /></StyledTableCell>
               <StyledTableCell>{header1Values.includes(attribute) ? "✔️" : "❌"}</StyledTableCell>
               <StyledTableCell>{header2Values.includes(attribute) ? "✔️" : "❌"}</StyledTableCell>
             </TableRow>
