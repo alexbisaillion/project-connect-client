@@ -14,7 +14,7 @@ type PageContainerProps = {
 }
 export const PageContainer = (props: PageContainerProps) => {
   return (
-    <Container component="main" maxWidth="md">
+    <Container component="main" maxWidth="lg">
       <CssBaseline />
       {props.children}
     </Container>

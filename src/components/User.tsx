@@ -50,8 +50,11 @@ const StyledPaper = styled(Paper)`
 const DetailedInfoContainer = styled.div`
   display: flex;
   flex-direction: row;
-  justify-content: space-around;
+  justify-content: space-between;
   width: 100%;
+  && > * {
+    width: 30%;
+  }
 `;
 
 interface UserInfo { username: string; }
