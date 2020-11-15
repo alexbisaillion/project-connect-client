@@ -107,7 +107,7 @@ const SkillBox = styled.div`
   flex-direction: row;
   flex-wrap: wrap;
   justify-content: center;
-  > * {
+  && > * {
     margin: 4px;
   }
 `;
@@ -456,9 +456,9 @@ export const UserAvatar = (props: UserAvatarProps) => {
 }
 
 const StyledLinearProgress = styled(LinearProgress)<CompatibilityBarProps>`
-  & {
+  && {
     background-color: #424242;
-    > .MuiLinearProgress-barColorPrimary {
+    && > .MuiLinearProgress-barColorPrimary {
       background-color: ${props => convertPercentageToColour(props.score)};
     }
   }

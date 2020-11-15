@@ -1,43 +1,50 @@
-import React from 'react';
-import { AppBar, Button, createStyles, IconButton, makeStyles, Theme, Toolbar, Typography } from "@material-ui/core";
+import React from "react";
+import styled from "styled-components";
+import { AppBar, Button, IconButton, Toolbar, Typography } from "@material-ui/core";
 import MenuIcon from '@material-ui/icons/Menu';
 import { authenticationManager } from '../authenticationManager';
+import { Link } from "react-router-dom";
 
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    root: {
-      flexGrow: 1,
-    },
-    menuButton: {
-      marginRight: theme.spacing(2),
-    },
-  }),
-);
+const NavBarContainer = styled.div`
+  flex-grow: 1;
+`;
+
+const StyledIconButton = styled(IconButton)`
+  margin-right: 16px;
+`
 
 type NavBarProps = {
   menuOnClick: () => void;
 }
 export const NavBar = (props: NavBarProps) => {
-  const classes = useStyles();
-
   const attemptLogout = async () => {
     await authenticationManager.attemptLogout();
     window.location.reload();
   }
 
+  const renderUserSection = () => {
+    if (authenticationManager.getIsLoggedIn()) {
+      return (
+        <>
+          <Button component={ Link } to={`/user/${authenticationManager.getLoggedInUser()}`} color="inherit">View profile</Button>
+          <Button color="inherit" onClick={() => attemptLogout()}>Log out</Button>
+        </>
+      )
+    }
+    return <Button component={ Link } to={"/login"} color="inherit">Log in</Button>
+  }
+
   return (
-    <div className={classes.root}>
+    <NavBarContainer>
       <AppBar position="static">
         <Toolbar variant="dense">
-          <IconButton edge="start" className={classes.menuButton} color="inherit" aria-label="menu" onClick={props.menuOnClick}>
+          <StyledIconButton edge="start" color="inherit" aria-label="menu" onClick={props.menuOnClick}>
             <MenuIcon />
-          </IconButton>
+          </StyledIconButton>
           <Typography variant="h6" color="inherit" style={{ flex: 1 }}>ProjectConnect</Typography>
-          {authenticationManager.getIsLoggedIn() &&
-            <Button color="inherit" onClick={() => attemptLogout()}>Logout</Button>
-          }
+          {renderUserSection()}
         </Toolbar>
       </AppBar>
-    </div>
+    </NavBarContainer>
   );
 }

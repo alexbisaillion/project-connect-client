@@ -13,7 +13,7 @@ const RegisterContainer = styled.div`
   flex-direction: column;
   justify-content: space-around;
   align-items: center;
-  > * {
+  && > * {
     margin: 8px;
   }
 `;
@@ -23,7 +23,7 @@ const DoubleInput = styled.div`
   flex-direction: row;
   justify-content: space-between;
   width: 100%;
-  > * {
+  && > * {
     width: 48%;
   }
 `;
@@ -33,7 +33,7 @@ const SkillBox = styled.div`
   flex-direction: row;
   flex-wrap: wrap;
   justify-content: center;
-  > * {
+  && > * {
     margin: 4px;
   }
 `;

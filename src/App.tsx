@@ -48,6 +48,7 @@ export const App = () => {
     }
     return (
       <BrowserRouter>
+        <NavBar menuOnClick={() => setIsSideBarOpen(!isSideBarOpen)} />
         <SideBar isOpen={isSideBarOpen} onChange={() => setIsSideBarOpen(!isSideBarOpen)} />
         <Route exact path="/" component={Home} />
         <Route path="/login" component={SignIn} />
@@ -64,7 +65,6 @@ export const App = () => {
 
   return (
     <MuiThemeProvider theme={theme}>
-      <NavBar menuOnClick={() => setIsSideBarOpen(!isSideBarOpen)} />
       {getContent()}
     </MuiThemeProvider>
   );

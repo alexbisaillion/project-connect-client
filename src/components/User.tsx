@@ -13,7 +13,7 @@ const UserContainer = styled.div`
   flex-direction: column;
   justify-content: space-around;
   align-items: center;
-  > * {
+  && > * {
     margin: 8px;
   }
 `;
@@ -29,7 +29,7 @@ const IntroContainer = styled.div`
 const IntroContent = styled.div`
   display: flex;
   flex-direction: column;
-  > * {
+  && > * {
     margin: 8px;
   }
 `;
