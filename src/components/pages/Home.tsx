@@ -4,6 +4,7 @@ import { getUser } from "../../api";
 import { authenticationManager } from "../../authenticationManager";
 import { LinkButton, LoadingIndicator, PageContainer, PageHeader } from "../commonComponents";
 import { ProjectRecommendations } from "../ProjectRecommendations";
+import { ProjectFeed } from "../ProjectFeed";
 
 const HomeContainer = styled.div`
   display: flex;
@@ -12,6 +13,16 @@ const HomeContainer = styled.div`
   align-items: center;
   && > * {
     margin: 8px;
+  }
+`;
+
+const RowContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  width: 100%;
+  && > *{
+    width: 40%;
   }
 `;
 
@@ -46,7 +57,10 @@ export const Home = () => {
     if (currentUser) {
       content = <>
         <PageHeader textContent={"Welcome, " + currentUser.name + "!"} />
-        <ProjectRecommendations username={currentUser.username} />
+        <RowContainer>
+          <ProjectFeed username={currentUser.username} tableWidth="45%" />
+          <ProjectRecommendations username={currentUser.username} tableWidth="45%" />
+        </RowContainer>
       </>;
     } else {
       content = <>

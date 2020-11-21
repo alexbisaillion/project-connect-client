@@ -207,3 +207,12 @@ export const acceptRequest = async (username: string, project: string): Promise<
     throw new Error(error);
   }
 }
+
+export const getMostRecentProjects = async (username: string): Promise<AxiosResponse<ProjectScore[]>> => {
+  try {
+    const result: AxiosResponse<ProjectScore[]> = await axios.post(baseUrl + "/getMostRecentProjects", { username });
+    return result;
+  } catch (error) {
+    throw new Error(error);
+  }
+}

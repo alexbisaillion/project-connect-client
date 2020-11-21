@@ -8,9 +8,10 @@ import { CompatibilityDialog } from "./CompatibilityDialog";
 type RecommendationsTableProps = {
   projectScores: ProjectScore[];
   username: string;
+  tableWidth?: string;
 }
 export const ProjectRecommendationsTable = (props: RecommendationsTableProps) => {
-  const { username } = props;
+  const { username, tableWidth } = props;
   const [loadedProjectScores, setLoadedProjectScores] = React.useState<ProjectScore[]>(props.projectScores);
   const [isSnackbarOpen, setIsSnackbarOpen] = React.useState<boolean>(false);
   const [isRequestSuccessful, setIsRequestSuccessful] = React.useState<boolean>(false);
@@ -44,6 +45,7 @@ export const ProjectRecommendationsTable = (props: RecommendationsTableProps) =>
     setIsSnackbarOpen(false); 
   }
 
+  console.log(tableWidth);
   return (
     <>
       {renderSnackbar()}
@@ -56,7 +58,7 @@ export const ProjectRecommendationsTable = (props: RecommendationsTableProps) =>
           score={selectedProject.score}
         />
       }
-      <TableContainer style={{ width: "auto"}} component={Paper}>
+      <TableContainer style={{ width: tableWidth ? tableWidth : "auto"}} component={Paper}>
         <TableHead>
           <TableRow>
             {["Name", "Compatibility", "Details", "Options"].map(header => {

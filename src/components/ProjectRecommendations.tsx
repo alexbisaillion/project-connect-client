@@ -5,8 +5,9 @@ import { ProjectRecommendationsTable } from "./ProjectRecommendationsTable";
 
 type Props = {
   username: string;
+  tableWidth?: string;
 }
-export const ProjectRecommendations = ({ username }: Props) => {
+export const ProjectRecommendations = ({ username, tableWidth }: Props) => {
   const [isLoading, setIsLoading] = React.useState<boolean>(true);
   const [recommendedProjects, setRecommendedProjects] = React.useState<ProjectScore[]>([]);
 
@@ -19,8 +20,10 @@ export const ProjectRecommendations = ({ username }: Props) => {
     getRecommendations();
   }, [username]);
 
+  console.log(tableWidth);
+
   if (isLoading) {
     return <LoadingIndicator />;
   }
-  return <ProjectRecommendationsTable projectScores={recommendedProjects.slice(0, 10)} username={username} />
+  return <ProjectRecommendationsTable projectScores={recommendedProjects.slice(0, 10)} username={username} tableWidth={tableWidth} />
 }
