@@ -216,3 +216,18 @@ export const getMostRecentProjects = async (username: string): Promise<AxiosResp
     throw new Error(error);
   }
 }
+
+export enum Operation {
+  NewInvite = "NewInvite",
+  AcceptedRequest = "AcceptedRequest",
+  NewRequest = "NewRequest",
+  AcceptedInvite = "AcceptedInvite"
+}
+
+export type NotificationItem = {
+  _id: string;
+  sender: string;
+  operation: Operation;
+  timestamp: Date;
+  project: string;
+}

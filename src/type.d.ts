@@ -15,7 +15,8 @@ interface IUser {
   programmingLanguages: Skill[];
   frameworks: Skill[];
   bio: string;
-  __v: number;
+  notifications: NotificationItem[];
+  __v: string;
 }
 
 interface IProject {

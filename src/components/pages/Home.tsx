@@ -5,6 +5,7 @@ import { authenticationManager } from "../../authenticationManager";
 import { LinkButton, LoadingIndicator, PageContainer, PageHeader } from "../commonComponents";
 import { ProjectRecommendations } from "../ProjectRecommendations";
 import { ProjectFeed } from "../ProjectFeed";
+import { NotificationFeed } from "../NotificationFeed";
 
 const HomeContainer = styled.div`
   display: flex;
@@ -57,6 +58,7 @@ export const Home = () => {
     if (currentUser) {
       content = <>
         <PageHeader textContent={"Welcome, " + currentUser.name + "!"} />
+        <NotificationFeed user={currentUser} />
         <RowContainer>
           <ProjectFeed username={currentUser.username} tableWidth="45%" />
           <ProjectRecommendations username={currentUser.username} tableWidth="45%" />
