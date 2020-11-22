@@ -2,7 +2,7 @@ import { Avatar, IconButton, List, ListItem, ListItemAvatar, ListItemSecondaryAc
 import React from "react";
 import styled from "styled-components";
 import DeleteIcon from '@material-ui/icons/Delete';
-import { getUsersByUsernames, NotificationItem, Operation } from "../api";
+import { dismissNotification, getUsersByUsernames, NotificationItem, Operation } from "../api";
 import moment from 'moment';
 
 const getNotificationMessage = (senderDisplayName: string, project: string, operation: Operation) => {
@@ -48,6 +48,11 @@ export const NotificationFeed = ({ user }: Props) => {
     fetchUsers(notifications.map(notification => notification.sender));
   }, [notifications]);
 
+  const deleteNotification = async (notificationId: string) => {
+    const result = await dismissNotification(user.username, notificationId);
+    setNotifications([...result.data.notifications]);
+  }
+
   return (
     <StyledList>
       {notifications.map(notification => {
@@ -63,7 +68,7 @@ export const NotificationFeed = ({ user }: Props) => {
               secondary={moment(notification.timestamp).fromNow()}
             />
             <ListItemSecondaryAction>
-              <IconButton><DeleteIcon /></IconButton>
+              <IconButton onClick={() => deleteNotification(notification._id)}><DeleteIcon /></IconButton>
             </ListItemSecondaryAction>
           </ListItem>
         )

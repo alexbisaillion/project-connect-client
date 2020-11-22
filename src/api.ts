@@ -231,3 +231,11 @@ export type NotificationItem = {
   timestamp: Date;
   project: string;
 }
+export const dismissNotification = async (username: string, notificationId: string): Promise<AxiosResponse<IUser>> => {
+  try {
+    const result: AxiosResponse<IUser> = await axios.post(baseUrl + "/dismissNotification", { username, notificationId });
+    return result;
+  } catch (error) {
+    throw new Error(error);
+  }
+}
