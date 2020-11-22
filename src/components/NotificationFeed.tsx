@@ -1,9 +1,11 @@
-import { Avatar, IconButton, List, ListItem, ListItemAvatar, ListItemSecondaryAction, ListItemText } from "@material-ui/core";
+import { Avatar, IconButton, List, ListItem, ListItemAvatar, ListItemSecondaryAction, ListItemText, Snackbar, Typography } from "@material-ui/core";
 import React from "react";
 import styled from "styled-components";
 import DeleteIcon from '@material-ui/icons/Delete';
-import { dismissNotification, getUsersByUsernames, NotificationItem, Operation } from "../api";
+import CheckIcon from '@material-ui/icons/Check';
+import { acceptRequest, dismissNotification, getUser, getUsersByUsernames, NotificationItem, Operation, registerInProject } from "../api";
 import moment from 'moment';
+import { Alert } from "@material-ui/lab";
 
 const getNotificationMessage = (senderDisplayName: string, project: string, operation: Operation) => {
   switch (operation) {
@@ -18,13 +20,20 @@ const getNotificationMessage = (senderDisplayName: string, project: string, oper
   }
 }
 
+const NotificationFeedContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 60%;
+  align-items: center;
+`;
+
 const StyledList = styled(List)`
   background-color: #424242;
-  width: 50%;
+  width: 100%;
 `;
 
 const StyledAvatar = styled(Avatar)`
-  & > .MuiAvatar-colorDefault {
+  && {
     color: white;
   }
 `;
@@ -35,6 +44,13 @@ type Props = {
 export const NotificationFeed = ({ user }: Props) => {
   const [notifications, setNotifications] = React.useState<NotificationItem[]>(user.notifications);
   const [loadedUsers, setLoadedUsers] = React.useState<IUser[]>([]);
+  const [isSnackbarOpen, setIsSnackbarOpen] = React.useState<boolean>(false);
+  const [isActionSuccessful, setIsActionSuccessful] = React.useState<boolean>(false);
+
+  const getInitial = (name: string) => {
+    const names = name.toUpperCase().split(" ");
+    return names[0].charAt(0) + (names[1] !== undefined ? names[1].charAt(0) : "");  
+  }
 
   React.useEffect(() => {
     const fetchUsers = async (usernames: string[]) => {
@@ -53,26 +69,72 @@ export const NotificationFeed = ({ user }: Props) => {
     setNotifications([...result.data.notifications]);
   }
 
+  const attemptAction = async (notification: NotificationItem) => {
+    try {
+      if (notification.operation === Operation.NewInvite) {
+        const result = await registerInProject(user.username, notification.project);
+        setNotifications([...result.data.notifications]);
+      } else if (notification.operation === Operation.NewRequest) {
+        await acceptRequest(notification.sender, notification.project);
+        const updatedUser = await getUser(user.username);
+        setNotifications([...updatedUser.data.notifications]);
+      }
+      setIsActionSuccessful(true);
+    } catch (_e) {
+      setIsActionSuccessful(false);
+    }
+    setIsSnackbarOpen(true);
+  }
+
+  const renderSnackbar = () => {
+    return (
+      <Snackbar open={isSnackbarOpen} autoHideDuration={6000} onClose={() => setIsSnackbarOpen(false)}>
+        <Alert variant="filled" onClose={() => setIsSnackbarOpen(false)} severity={isActionSuccessful ? "success" : "error"}>
+          {isActionSuccessful ? "Successfully accepted!" : "Failed to accept." }
+        </Alert>
+      </Snackbar>
+    );
+  }
+
+  const renderNotifications = () => {
+    if (notifications.length === 0) {
+      return <Typography>All caught up!</Typography>;
+    }
+    return (
+      <StyledList>
+        {notifications.map(notification => {
+          const fullUser = loadedUsers.find(user => user.username === notification.sender);
+          return (
+            <ListItem key={notification._id}>
+              <ListItemAvatar><StyledAvatar>{getInitial(fullUser ? fullUser.name : notification.sender)}</StyledAvatar></ListItemAvatar>
+              <ListItemText
+                primary={getNotificationMessage(
+                  fullUser ? fullUser.name : notification.sender,
+                  notification.project,
+                  notification.operation
+                )}
+                secondary={moment(notification.timestamp).fromNow()}
+              />
+              <ListItemSecondaryAction>
+                {(notification.operation === Operation.NewInvite || notification.operation === Operation.NewRequest) &&
+                  <IconButton onClick={() => attemptAction(notification)}><CheckIcon /></IconButton>                
+                }
+                <IconButton onClick={() => deleteNotification(notification._id)}><DeleteIcon /></IconButton>
+              </ListItemSecondaryAction>
+            </ListItem>
+          )
+        })}
+      </StyledList>
+    );
+  }
+
   return (
-    <StyledList>
-      {notifications.map(notification => {
-        return (
-          <ListItem key={notification._id}>
-            <ListItemAvatar><StyledAvatar>TP</StyledAvatar></ListItemAvatar>
-            <ListItemText
-              primary={getNotificationMessage(
-                loadedUsers.find(user => user.username === notification.sender)?.name ?? notification.sender,
-                notification.project,
-                notification.operation
-              )}
-              secondary={moment(notification.timestamp).fromNow()}
-            />
-            <ListItemSecondaryAction>
-              <IconButton onClick={() => deleteNotification(notification._id)}><DeleteIcon /></IconButton>
-            </ListItemSecondaryAction>
-          </ListItem>
-        )
-      })}
-    </StyledList>
-  );
+    <>
+      {renderSnackbar()}
+      <NotificationFeedContainer>
+        <Typography>Notifications</Typography>
+        {renderNotifications()}
+      </NotificationFeedContainer>
+    </>
+  )
 }
