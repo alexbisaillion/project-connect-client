@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import { getProjectsByNames, getUser, registerInProject } from "../api";
+import { getProjectsByNames, getUser, registerInProject, voteForSkill } from "../api";
 import { RouteComponentProps } from 'react-router-dom'
 import { PageHeader, Attribute, PageContainer, LoadingIndicator, Panel, AttributeList, WeightedSkillList, UserAvatar, SearchResultsTable } from "./commonComponents";
 import { PositionIcon } from "./icons";
@@ -63,6 +63,7 @@ interface ComponentProps extends RouteComponentProps<UserInfo> {}
 
 export const User = (props: ComponentProps) => {
   const { username } = props.match.params;
+  const viewingUser = authenticationManager.getLoggedInUser();
   const [loadedUser, setLoadedUser] = React.useState<IUser | undefined>(undefined);
   const [loadedProjects, setLoadedProjects] = React.useState<IProject[]>([]);
   const [loadedInvites, setLoadedInvites] = React.useState<IProject[]>([]);
@@ -117,6 +118,17 @@ export const User = (props: ComponentProps) => {
     return false;
   }
 
+  const canVote = () => loadedUser && viewingUser.length > 0 && viewingUser !== loadedUser.username;
+
+  const vote = async (skill: string) => {
+    if (!canVote() || !loadedUser) {
+      return;
+    }
+
+    const updatedUser = await voteForSkill(loadedUser.username, viewingUser, skill);
+    setLoadedUser(updatedUser.data);
+  }
+
   const getContent = () => {
     if (!loadedUser) {
       return <LoadingIndicator />
@@ -157,13 +169,25 @@ export const User = (props: ComponentProps) => {
           <Panel>
             <AttributeList title="Skills">
               <AttributeList title="Interests" dense={true}>
-                <WeightedSkillList skills={loadedUser.skills} />
+                <WeightedSkillList
+                  skills={loadedUser.skills}
+                  viewingUser={canVote() ? viewingUser : undefined}
+                  vote={canVote() ? vote : undefined}
+                />
               </AttributeList>
               <AttributeList title="Programming Languages" dense={true}>
-                <WeightedSkillList skills={loadedUser.programmingLanguages} />
+                <WeightedSkillList
+                  skills={loadedUser.programmingLanguages}
+                  viewingUser={canVote() ? viewingUser : undefined}
+                  vote={canVote() ? vote : undefined}  
+                />
               </AttributeList>
               <AttributeList title="Frameworks" dense={true}>
-                <WeightedSkillList skills={loadedUser.frameworks} />
+                <WeightedSkillList
+                  skills={loadedUser.frameworks}
+                  viewingUser={canVote() ? viewingUser : undefined}
+                  vote={canVote()? vote : undefined}  
+                />
               </AttributeList>
             </AttributeList>
           </Panel>

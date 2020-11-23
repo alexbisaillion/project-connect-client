@@ -58,7 +58,7 @@ type SuccessResponse = {
 type Skill = {
   _id: string;
   name: string;
-  votes: number;
+  votes: string[];
 }
 
 type ProjectScore = {

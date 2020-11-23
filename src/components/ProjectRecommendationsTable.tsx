@@ -45,7 +45,6 @@ export const ProjectRecommendationsTable = (props: RecommendationsTableProps) =>
     setIsSnackbarOpen(false); 
   }
 
-  console.log(tableWidth);
   return (
     <>
       {renderSnackbar()}

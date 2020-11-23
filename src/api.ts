@@ -239,3 +239,12 @@ export const dismissNotification = async (username: string, notificationId: stri
     throw new Error(error);
   }
 }
+
+export const voteForSkill = async (targetUsername: string, votingUsername: string, skill: string): Promise<AxiosResponse<IUser>> => {
+  try {
+    const result: AxiosResponse<IUser> = await axios.post(baseUrl + "/voteForSkill", { targetUsername, votingUsername, skill });
+    return result;
+  } catch (error) {
+    throw new Error(error);
+  }
+}

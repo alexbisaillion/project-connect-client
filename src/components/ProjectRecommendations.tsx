@@ -20,8 +20,6 @@ export const ProjectRecommendations = ({ username, tableWidth }: Props) => {
     getRecommendations();
   }, [username]);
 
-  console.log(tableWidth);
-
   if (isLoading) {
     return <LoadingIndicator />;
   }

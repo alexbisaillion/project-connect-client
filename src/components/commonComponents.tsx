@@ -8,6 +8,7 @@ import AccountTreeIcon from '@material-ui/icons/AccountTree';
 import SearchIcon from '@material-ui/icons/Search';
 import { getDisplayDate, convertPercentageToColour } from "../utilities";
 import { Alert } from "@material-ui/lab";
+import CheckIcon from '@material-ui/icons/Check';
 
 type PageContainerProps = {
   children: React.ReactNode;
@@ -113,17 +114,24 @@ const SkillBox = styled.div`
 `;
 type WeightedSkillListProps = {
   skills: Skill[];
+  viewingUser?: string;
+  vote?: (skill: string) => Promise<void>;
 }
 export const WeightedSkillList = (props: WeightedSkillListProps) => {
   return (
     <SkillBox>
       {props.skills.map((skill) => {
+        const isAlreadyVoted: boolean = !!props.viewingUser && skill.votes.includes(props.viewingUser);
         return (
           <Chip
-            avatar={<Avatar>{skill.votes}</Avatar>}
+            avatar={<Avatar>{skill.votes.length}</Avatar>}
             key={skill.name}
             label={skill.name}
             color="primary"
+            disabled={isAlreadyVoted}
+            onClick={props.vote ? () => props.vote && props.vote(skill.name) : undefined}
+            onDelete={isAlreadyVoted ? () => {} : undefined} /* Only used to get the icon to show up*/
+            deleteIcon={isAlreadyVoted ? <CheckIcon /> : undefined}
           />
         )
       })}
