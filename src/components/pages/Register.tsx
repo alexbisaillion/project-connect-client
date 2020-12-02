@@ -172,6 +172,18 @@ export const Register = () => {
     return (
       <>
         <Typography variant="h4">Skills</Typography>
+        <SkillBox>
+          {selectedSkills.map(skill => {
+            return (
+              <Chip
+                key={skill}
+                label={skill}
+                onDelete={() => setSelectedSkills(selectedSkills.filter(selectedSkill => selectedSkill !== skill))}
+                color="primary"
+              />
+            )
+          })}
+        </SkillBox>
         <Autocomplete
           fullWidth
           options={availableSkills}
@@ -183,12 +195,12 @@ export const Register = () => {
           renderInput={(params) => <TextField {...params} label="Skills" variant="outlined" />}
         />
         <SkillBox>
-          {selectedSkills.map((skill, index) => {
+          {selectedProgrammingLanguages.map(programmingLanguage => {
             return (
               <Chip
-                key={index /* yikes */}
-                label={skill}
-                onDelete={() => setSelectedSkills(selectedSkills.filter(selectedSkill => selectedSkill !== skill))}
+                key={programmingLanguage}
+                label={programmingLanguage}
+                onDelete={() => setSelectedProgrammingLanguages(selectedProgrammingLanguages.filter(selectedProgrammingLanguage => selectedProgrammingLanguage !== programmingLanguage))}
                 color="primary"
               />
             )
@@ -205,12 +217,12 @@ export const Register = () => {
           renderInput={(params) => <TextField {...params} label="Programming Languages" variant="outlined" />}
         />
         <SkillBox>
-          {selectedProgrammingLanguages.map((programmingLanguage, index) => {
+          {selectedFrameworks.map(framework => {
             return (
               <Chip
-                key={index /* yikes */}
-                label={programmingLanguage}
-                onDelete={() => setSelectedProgrammingLanguages(selectedProgrammingLanguages.filter(selectedProgrammingLanguage => selectedProgrammingLanguage !== programmingLanguage))}
+                key={framework}
+                label={framework}
+                onDelete={() => setSelectedFrameworks(selectedFrameworks.filter(selectedFramework => selectedFramework !== framework))}
                 color="primary"
               />
             )
@@ -226,18 +238,6 @@ export const Register = () => {
           }}
           renderInput={(params) => <TextField {...params} label="Frameworks" variant="outlined" />}
         />
-        <SkillBox>
-          {selectedFrameworks.map((framework, index) => {
-            return (
-              <Chip
-                key={index /* yikes */}
-                label={framework}
-                onDelete={() => setSelectedFrameworks(selectedFrameworks.filter(selectedFramework => selectedFramework !== framework))}
-                color="primary"
-              />
-            )
-          })}
-        </SkillBox>
         <Button
           fullWidth
           variant="contained"
