@@ -205,13 +205,16 @@ type ApplyButtonProps = {
   name: string;
   onApply: () => void;
   disabled?: boolean;
+  color?: "primary" | "secondary";
+  fullWidth?: boolean;
 }
 export const ApplyButton = (props: ApplyButtonProps) => {
   return (
     <Button
-      fullWidth
+      style={{ marginLeft: props.color === "secondary" && !props.fullWidth ? "8px" : undefined}}
+      fullWidth={props.fullWidth ?? true}
       variant="contained"
-      color="primary"
+      color={props.color ? props.color : "primary"}
       onClick={props.onApply}
       disabled={props.disabled}
     >
@@ -288,29 +291,53 @@ type SearchResultsTableProps = {
   userData?: IUser[];
   projectData?: IProject[];
   dataType: "user" | "project";
-  action?: ItemAction;
+  acceptAction?: ItemAction;
+  rejectAction?: ItemAction;
 }
 export const SearchResultsTable = (props: SearchResultsTableProps) => {
   const [isSnackbarOpen, setIsSnackbarOpen] = React.useState<boolean>(false);
   const [isActionSuccessful, setIsActionSuccessful] = React.useState<boolean>(false);
 
-  const executeAction = async (item: string) => {
-    if (!props.action) {
+  const executeAcceptAction = async (item: string) => {
+    if (!props.acceptAction) {
       return;
     }
-    const result = await props.action.action(item);
+    const result = await props.acceptAction.action(item);
     setIsSnackbarOpen(true);
     setIsActionSuccessful(result);
   }
 
-  const renderSnackbar = () => {
-    if (!props.action) {
+  const executeRejectAction = async (item: string) => {
+    if (!props.rejectAction) {
+      return;
+    }
+
+    const result = await props.rejectAction.action(item);
+    setIsSnackbarOpen(true);
+    setIsActionSuccessful(result);
+  }
+
+  const renderAcceptSnackbar = () => {
+    if (!props.acceptAction) {
       return;
     }
     return (
       <Snackbar open={isSnackbarOpen} autoHideDuration={6000} onClose={() => setIsSnackbarOpen(false)}>
         <Alert variant="filled" onClose={() => setIsSnackbarOpen(false)} severity={isActionSuccessful ? "success" : "error"}>
-          {isActionSuccessful ? props.action.successMessage : props.action.failureMessage }
+          {isActionSuccessful ? props.acceptAction.successMessage : props.acceptAction.failureMessage }
+        </Alert>
+      </Snackbar>
+    );
+  }
+
+  const renderRejectSnackbar = () => {
+    if (!props.rejectAction) {
+      return;
+    }
+    return (
+      <Snackbar open={isSnackbarOpen} autoHideDuration={6000} onClose={() => setIsSnackbarOpen(false)}>
+        <Alert variant="filled" onClose={() => setIsSnackbarOpen(false)} severity={isActionSuccessful ? "success" : "error"}>
+          {isActionSuccessful ? props.rejectAction.successMessage : props.rejectAction.failureMessage }
         </Alert>
       </Snackbar>
     );
@@ -325,7 +352,7 @@ export const SearchResultsTable = (props: SearchResultsTableProps) => {
               <TableCell key={header} align="right">{header}</TableCell>
             );
           })}
-          {props.action &&
+          {(props.acceptAction || props.rejectAction) &&
             <TableCell align="right">Action</TableCell>
           }
         </TableRow>
@@ -349,13 +376,25 @@ export const SearchResultsTable = (props: SearchResultsTableProps) => {
                     <TableCell align="right" key={project.name + "-" + attribute}>{attribute}</TableCell>
                   );
               })}
-              {props.action &&
+              {(props.acceptAction || props.rejectAction) &&
                 <TableCell align="right">
-                  <ApplyButton
-                    disabled={props.action.checkDisabled(project.name)}
-                    name={props.action.checkDisabled(project.name) ? props.action.disabledButtonLabel : props.action.enabledButtonLabel}
-                    onApply={() => executeAction(project.name)}
-                  />
+                  {props.acceptAction && 
+                    <ApplyButton
+                      fullWidth={false}
+                      disabled={props.acceptAction.checkDisabled(project.name)}
+                      name={props.acceptAction.checkDisabled(project.name) ? props.acceptAction.disabledButtonLabel : props.acceptAction.enabledButtonLabel}
+                      onApply={() => executeAcceptAction(project.name)}
+                    />
+                  }
+                  {props.rejectAction &&
+                    <ApplyButton
+                      fullWidth={false}
+                      disabled={props.rejectAction.checkDisabled(project.name)}
+                      name={props.rejectAction.checkDisabled(project.name) ? props.rejectAction.disabledButtonLabel : props.rejectAction.enabledButtonLabel}
+                      onApply={() => executeRejectAction(project.name)}
+                      color="secondary"
+                    />
+                  }
                 </TableCell>
               }
             </TableRow>
@@ -374,7 +413,7 @@ export const SearchResultsTable = (props: SearchResultsTableProps) => {
               <TableCell key={header} align="right">{header}</TableCell>
             );
           })}
-          {props.action &&
+          {(props.acceptAction || props.rejectAction) &&
             <TableCell align="right">Action</TableCell>
           }
         </TableRow>
@@ -399,13 +438,25 @@ export const SearchResultsTable = (props: SearchResultsTableProps) => {
                     <TableCell align="right" key={user.username + "-" + attribute}>{attribute}</TableCell>
                   );
               })}
-              {props.action &&
+              {(props.acceptAction || props.rejectAction) &&
                 <TableCell align="right">
-                  <ApplyButton
-                    disabled={props.action.checkDisabled(user.username)}
-                    name={props.action.checkDisabled(user.username) ? props.action.disabledButtonLabel : props.action.enabledButtonLabel}
-                    onApply={() => executeAction(user.username)}
-                  />
+                  {props.acceptAction &&
+                    <ApplyButton
+                      fullWidth={false}
+                      disabled={props.acceptAction.checkDisabled(user.username)}
+                      name={props.acceptAction.checkDisabled(user.username) ? props.acceptAction.disabledButtonLabel : props.acceptAction.enabledButtonLabel}
+                      onApply={() => executeAcceptAction(user.username)}
+                    />
+                  }
+                  {props.rejectAction &&
+                    <ApplyButton
+                      fullWidth={false}
+                      disabled={props.rejectAction.checkDisabled(user.username)}
+                      name={props.rejectAction.checkDisabled(user.username) ? props.rejectAction.disabledButtonLabel : props.rejectAction.enabledButtonLabel}
+                      onApply={() => executeRejectAction(user.username)}
+                      color="secondary"
+                    />
+                  }
                 </TableCell>
               }
             </TableRow>
@@ -434,7 +485,8 @@ export const SearchResultsTable = (props: SearchResultsTableProps) => {
 
   return (
     <>
-      {renderSnackbar()}
+      {renderAcceptSnackbar()}
+      {renderRejectSnackbar()}
       <TableContainer style={{ width: "auto"}} component={Paper}>
         {getContent()}
       </TableContainer>

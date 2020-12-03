@@ -17,6 +17,10 @@ const getNotificationMessage = (senderDisplayName: string, project: string, oper
       return `${senderDisplayName} wants you to join ${project}.`;
     case Operation.NewRequest:
       return `${senderDisplayName} wants to join ${project}.`;
+    case Operation.RejectedRequest:
+      return `${senderDisplayName} has rejected your request to join ${project}.`;
+    case Operation.RejectedInvite:
+      return `${senderDisplayName} has rejected your invite to join ${project}.`;
   }
 }
 

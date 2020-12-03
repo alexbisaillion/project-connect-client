@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import { acceptRequest, getProject, getUsersByUsernames } from "../api";
+import { acceptRequest, getProject, getUsersByUsernames, rejectRequest } from "../api";
 import { RouteComponentProps } from 'react-router-dom'
 import { PageHeader, Attribute, PageContainer, LoadingIndicator, Panel, AttributeList, SkillList, SearchResultsTable } from "./commonComponents";
 import { getDisplayDate } from "../utilities";
@@ -108,6 +108,19 @@ export const Project = (props: ComponentProps) => {
     return false;
   }
 
+  const rejectJoinRequest = async (username: string): Promise<boolean> => {
+    if (!loadedProject) {
+      return false;
+    }
+    const result = await rejectRequest(username, loadedProject.name);
+
+    if (result.data) {
+      setLoadedProject(result.data);
+      return true;
+    }
+    return false;
+  }
+
   const getContent = () => {
     if (!loadedProject) {
       return <LoadingIndicator />
@@ -164,13 +177,21 @@ export const Project = (props: ComponentProps) => {
             <SearchResultsTable
               userData={loadedRequests}
               dataType="user"
-              action={{
+              acceptAction={{
                 action: acceptJoinRequest,
                 checkDisabled: (username: string) => !loadedProject.requests.includes(username),
                 enabledButtonLabel: "Accept",
                 disabledButtonLabel: "Accepted",
                 successMessage: "Join request accepted!",
                 failureMessage: "Failed to accept join request."
+              }}
+              rejectAction={{
+                action: rejectJoinRequest,
+                checkDisabled: (username: string) => !loadedProject.requests.includes(username),
+                enabledButtonLabel: "Reject",
+                disabledButtonLabel: "Reject",
+                successMessage: "Join requested rejected.",
+                failureMessage: "Failed to reject join request"
               }}
             />
           </>

@@ -204,7 +204,7 @@ export const User = (props: ComponentProps) => {
             <SearchResultsTable
               projectData={loadedInvites}
               dataType="project"
-              action={{
+              acceptAction={{
                 action: acceptInvitation,
                 checkDisabled: (projectName: string) => !loadedUser.invitations.includes(projectName),
                 enabledButtonLabel: "Accept",

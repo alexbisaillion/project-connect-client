@@ -208,6 +208,16 @@ export const acceptRequest = async (username: string, project: string): Promise<
   }
 }
 
+export const rejectRequest = async (username: string, project: string): Promise<AxiosResponse<IProject>> => {
+  try {
+    // This returns the project so that the page can be re-rendered.
+    const result: AxiosResponse<IProject> = await axios.post(baseUrl + "/rejectRequest", { username, name: project });
+    return result;
+  } catch (error) {
+    throw new Error(error);
+  }
+}
+
 export const getMostRecentProjects = async (username: string): Promise<AxiosResponse<ProjectScore[]>> => {
   try {
     const result: AxiosResponse<ProjectScore[]> = await axios.post(baseUrl + "/getMostRecentProjects", { username });
@@ -218,10 +228,12 @@ export const getMostRecentProjects = async (username: string): Promise<AxiosResp
 }
 
 export enum Operation {
-  NewInvite = "NewInvite",
-  AcceptedRequest = "AcceptedRequest",
   NewRequest = "NewRequest",
-  AcceptedInvite = "AcceptedInvite"
+  AcceptedRequest = "AcceptedRequest",
+  RejectedRequest = "RejectedRequest",
+  NewInvite = "NewInvite",
+  AcceptedInvite = "AcceptedInvite",
+  RejectedInvite = "RejectedInvite"
 }
 
 export type NotificationItem = {
