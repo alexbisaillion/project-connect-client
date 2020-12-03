@@ -30,15 +30,17 @@ const StyledForm = styled.form`
 export const SignIn = () => {
   const [username, setUsername] = React.useState<string>("");
   const [password, setPassword] = React.useState<string>("");
-  const [successfulLogin, setSuccessfulLogin] = React.useState<boolean>(false);
   const [isSnackbarOpen, setIsSnackbarOpen] = React.useState<boolean>(false);
 
   const attemptLogin = async () => {
     try {
       await authenticationManager.attemptLogIn(username, password);
-      setSuccessfulLogin(authenticationManager.getIsLoggedIn());  
+      if (authenticationManager.getIsLoggedIn()) {
+        window.location.reload();
+      } else {
+        setIsSnackbarOpen(true);
+      }
     } catch (_e) {
-      setSuccessfulLogin(false);
       setIsSnackbarOpen(true);
     }
   };
@@ -51,7 +53,7 @@ export const SignIn = () => {
     );
   }
 
-  if (successfulLogin) {
+  if (authenticationManager.getIsLoggedIn()) {
     return <Redirect to={`/`} />
   } else {
     return (
