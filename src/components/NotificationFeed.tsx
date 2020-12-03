@@ -3,7 +3,8 @@ import React from "react";
 import styled from "styled-components";
 import DeleteIcon from '@material-ui/icons/Delete';
 import CheckIcon from '@material-ui/icons/Check';
-import { acceptRequest, dismissNotification, getUser, getUsersByUsernames, NotificationItem, Operation, registerInProject } from "../api";
+import ClearIcon from '@material-ui/icons/Clear';
+import { acceptRequest, dismissNotification, getUser, getUsersByUsernames, NotificationItem, Operation, registerInProject, rejectInvite, rejectRequest } from "../api";
 import moment from 'moment';
 import { Alert } from "@material-ui/lab";
 import { PageHeader, Panel } from "./commonComponents";
@@ -28,7 +29,7 @@ const getNotificationMessage = (senderDisplayName: string, project: string, oper
 const NotificationFeedContainer = styled.div`
   display: flex;
   flex-direction: column;
-  width: 60%;
+  width: 100%;
   align-items: center;
 `;
 
@@ -91,11 +92,28 @@ export const NotificationFeed = ({ user }: Props) => {
     setIsSnackbarOpen(true);
   }
 
+  const attemptRejectAction = async (notification: NotificationItem) => {
+    try {
+      if (notification.operation === Operation.NewInvite) {
+        const result = await rejectInvite(user.username, notification.project);
+        setNotifications([...result.data.notifications]);
+      } else if (notification.operation === Operation.NewRequest) {
+        await rejectRequest(notification.sender, notification.project);
+        const updatedUser = await getUser(user.username);
+        setNotifications([...updatedUser.data.notifications]);
+      }
+      setIsActionSuccessful(true);
+    } catch (_e) {
+      setIsActionSuccessful(false);
+    }
+    setIsSnackbarOpen(true);
+  }
+
   const renderSnackbar = () => {
     return (
       <Snackbar open={isSnackbarOpen} autoHideDuration={6000} onClose={() => setIsSnackbarOpen(false)}>
         <Alert variant="filled" onClose={() => setIsSnackbarOpen(false)} severity={isActionSuccessful ? "success" : "error"}>
-          {isActionSuccessful ? "Successfully accepted!" : "Failed to accept." }
+          {isActionSuccessful ? "Success!" : "An error occured." }
         </Alert>
       </Snackbar>
     );
@@ -120,12 +138,13 @@ export const NotificationFeed = ({ user }: Props) => {
                 )}
                 secondary={moment(notification.timestamp).fromNow()}
               />
-              <ListItemSecondaryAction>
-                {(notification.operation === Operation.NewInvite || notification.operation === Operation.NewRequest) &&
-                  <IconButton onClick={() => attemptAction(notification)}><CheckIcon /></IconButton>                
-                }
-                <IconButton onClick={() => deleteNotification(notification._id)}><DeleteIcon /></IconButton>
-              </ListItemSecondaryAction>
+              {(notification.operation === Operation.NewInvite || notification.operation === Operation.NewRequest) &&
+                <IconButton onClick={() => attemptAction(notification)}><CheckIcon /></IconButton>                
+              }
+              {(notification.operation === Operation.NewInvite || notification.operation === Operation.NewRequest) &&
+                <IconButton onClick={() => attemptRejectAction(notification)}><ClearIcon /></IconButton>                
+              }
+              <IconButton onClick={() => deleteNotification(notification._id)}><DeleteIcon /></IconButton>
             </ListItem>
           )
         })}
