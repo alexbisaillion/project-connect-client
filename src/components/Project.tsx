@@ -1,12 +1,13 @@
 import React from "react";
 import styled from "styled-components";
-import { acceptRequest, getProject, getUsersByUsernames, rejectRequest } from "../api";
+import { acceptRequest, getProject, getUsersByUsernames, rejectRequest, requestToJoinProject } from "../api";
 import { RouteComponentProps } from 'react-router-dom'
-import { PageHeader, Attribute, PageContainer, LoadingIndicator, Panel, AttributeList, SkillList, SearchResultsTable } from "./commonComponents";
+import { PageHeader, Attribute, PageContainer, LoadingIndicator, Panel, AttributeList, SkillList, SearchResultsTable, ApplyButton } from "./commonComponents";
 import { getDisplayDate } from "../utilities";
-import { Paper } from "@material-ui/core";
+import { Paper, Snackbar } from "@material-ui/core";
 import { UserRecommendations } from "./UserRecommendations";
 import { authenticationManager } from "../authenticationManager";
+import { Alert } from "@material-ui/lab";
 
 const ProjectContainer = styled.div`
   display: flex;
@@ -58,6 +59,8 @@ export const Project = (props: ComponentProps) => {
   const [loadedUsers, setLoadedUsers] = React.useState<IUser[]>([]);
   const [loadedInvitees, setLoadedInvitees] = React.useState<IUser[]>([]);
   const [loadedRequests, setLoadedRequests] = React.useState<IUser[]>([]);
+  const [isSnackbarOpen, setIsSnackbarOpen] = React.useState<boolean>(false);
+  const [isRequestSuccessful, setIsRequestSuccessful] = React.useState<boolean>(false);
 
   React.useEffect(() => {
     const fetchProject = async () => {
@@ -95,6 +98,21 @@ export const Project = (props: ComponentProps) => {
     }
   }, [loadedProject]);
 
+  const sendJoinRequest = async () => {
+    if (!loadedProject) {
+      return;
+    }
+    const result = await requestToJoinProject(authenticationManager.getLoggedInUser(), loadedProject.name);
+    if (result.data) {
+      setLoadedProject(result.data);
+      setIsRequestSuccessful(true);
+      setIsSnackbarOpen(true);
+    } else {
+      setIsRequestSuccessful(false);
+      setIsSnackbarOpen(false);   
+    }
+  }
+
   const acceptJoinRequest = async (username: string): Promise<boolean> => {
     if (!loadedProject) {
       return false;
@@ -121,6 +139,16 @@ export const Project = (props: ComponentProps) => {
     return false;
   }
 
+  const renderSnackbar = () => {
+    return (
+      <Snackbar open={isSnackbarOpen} autoHideDuration={6000} onClose={() => setIsSnackbarOpen(false)}>
+        <Alert variant="filled" onClose={() => setIsSnackbarOpen(false)} severity={isRequestSuccessful ? "success" : "error"}>
+          {isRequestSuccessful ? "Request sent!" : "Failed to send request." }
+        </Alert>
+      </Snackbar>
+    );
+  }
+
   const getContent = () => {
     if (!loadedProject) {
       return <LoadingIndicator />
@@ -135,6 +163,13 @@ export const Project = (props: ComponentProps) => {
             </IntroContent>
           </StyledPaper>
         </IntroContainer>
+        {authenticationManager.getIsLoggedIn() && authenticationManager.getLoggedInUser() !== loadedProject.creator &&
+          <ApplyButton
+            name={loadedProject.requests.includes(authenticationManager.getLoggedInUser()) ? "Join Request Sent" : "Request to Join Project"}
+            onApply={() => sendJoinRequest()}
+            disabled={loadedProject.requests.includes(authenticationManager.getLoggedInUser()) || isRequestSuccessful}
+          />
+        }
         <DetailedInfoContainer>
           <Panel>
             <AttributeList title="Basic Information">
@@ -207,8 +242,11 @@ export const Project = (props: ComponentProps) => {
   }
 
   return (
-    <PageContainer>
-      {getContent()}
-    </PageContainer>
+    <>
+      {renderSnackbar()}
+      <PageContainer>
+        {getContent()}
+      </PageContainer>
+    </>
   );
 };
