@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import { getProjectsByNames, getUser, registerInProject, voteForSkill } from "../api";
+import { getProjectsByNames, getUser, registerInProject, rejectInvite, voteForSkill } from "../api";
 import { RouteComponentProps } from 'react-router-dom'
 import { PageHeader, Attribute, PageContainer, LoadingIndicator, Panel, AttributeList, WeightedSkillList, UserAvatar, SearchResultsTable } from "./commonComponents";
 import { PositionIcon } from "./icons";
@@ -118,6 +118,19 @@ export const User = (props: ComponentProps) => {
     return false;
   }
 
+  const rejectInvitation = async (projectName: string): Promise<boolean> => {
+    if (!loadedUser) {
+      return false;
+    }
+    const result = await rejectInvite(loadedUser.username, projectName);
+
+    if (result.data) {
+      setLoadedUser(result.data);
+      return true;
+    }
+    return false;
+  }
+
   const canVote = () => loadedUser && viewingUser.length > 0 && viewingUser !== loadedUser.username;
 
   const vote = async (skill: string) => {
@@ -208,9 +221,17 @@ export const User = (props: ComponentProps) => {
                 action: acceptInvitation,
                 checkDisabled: (projectName: string) => !loadedUser.invitations.includes(projectName),
                 enabledButtonLabel: "Accept",
-                disabledButtonLabel: "Accepted",
+                disabledButtonLabel: "Accept",
                 successMessage: "Invitation accepted!",
                 failureMessage: "Failed to accept invitation."
+              }}
+              rejectAction={{
+                action: rejectInvitation,
+                checkDisabled: (projectName: string) => !loadedUser.invitations.includes(projectName),
+                enabledButtonLabel: "Reject",
+                disabledButtonLabel: "Reject",
+                successMessage: "Invitation rejected.",
+                failureMessage: "Failed to reject invitation."
               }}
             />
           </>

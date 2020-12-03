@@ -218,6 +218,15 @@ export const rejectRequest = async (username: string, project: string): Promise<
   }
 }
 
+export const rejectInvite = async (username: string, project: string): Promise<AxiosResponse<IUser>> => {
+  try {
+    const result: AxiosResponse<IUser> = await axios.post(baseUrl + "/rejectInvite", { username, name: project });
+    return result;
+  } catch (error) {
+    throw new Error(error);
+  }
+}
+
 export const getMostRecentProjects = async (username: string): Promise<AxiosResponse<ProjectScore[]>> => {
   try {
     const result: AxiosResponse<ProjectScore[]> = await axios.post(baseUrl + "/getMostRecentProjects", { username });

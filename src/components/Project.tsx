@@ -181,7 +181,7 @@ export const Project = (props: ComponentProps) => {
                 action: acceptJoinRequest,
                 checkDisabled: (username: string) => !loadedProject.requests.includes(username),
                 enabledButtonLabel: "Accept",
-                disabledButtonLabel: "Accepted",
+                disabledButtonLabel: "Accept",
                 successMessage: "Join request accepted!",
                 failureMessage: "Failed to accept join request."
               }}
