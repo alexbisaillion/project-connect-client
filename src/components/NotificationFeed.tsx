@@ -6,6 +6,7 @@ import CheckIcon from '@material-ui/icons/Check';
 import { acceptRequest, dismissNotification, getUser, getUsersByUsernames, NotificationItem, Operation, registerInProject } from "../api";
 import moment from 'moment';
 import { Alert } from "@material-ui/lab";
+import { PageHeader, Panel } from "./commonComponents";
 
 const getNotificationMessage = (senderDisplayName: string, project: string, operation: Operation) => {
   switch (operation) {
@@ -136,8 +137,10 @@ export const NotificationFeed = ({ user }: Props) => {
     <>
       {renderSnackbar()}
       <NotificationFeedContainer>
-        <Typography>Notifications</Typography>
-        {renderNotifications()}
+        <PageHeader size="h5" textContent="Notifications" />
+        <Panel>
+          {renderNotifications()}
+        </Panel>
       </NotificationFeedContainer>
     </>
   )

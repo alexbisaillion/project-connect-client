@@ -27,6 +27,19 @@ const RowContainer = styled.div`
   }
 `;
 
+type ColumnContainerProps = {
+  columnWidth: string;
+}
+const ColumnContainer = styled.div<ColumnContainerProps>`
+  display: flex;
+  flex-direction: column;
+  width: ${props => props.columnWidth};
+  align-items: center;
+  && > * {
+    margin: 8px;
+  }
+`;
+
 export const Home = () => {
   const isLoggedIn = authenticationManager.getIsLoggedIn();
   const [isLoading, setIsLoading] = React.useState<boolean>(true);
@@ -60,8 +73,14 @@ export const Home = () => {
         <PageHeader textContent={"Welcome, " + currentUser.name + "!"} />
         <NotificationFeed user={currentUser} />
         <RowContainer>
-          <ProjectFeed username={currentUser.username} tableWidth="45%" />
-          <ProjectRecommendations username={currentUser.username} tableWidth="45%" />
+          <ColumnContainer columnWidth="45%">
+            <PageHeader size="h5" textContent="Latest Projects" />
+            <ProjectFeed username={currentUser.username} />
+          </ColumnContainer>
+          <ColumnContainer columnWidth="45%">
+            <PageHeader size="h5" textContent="Your Recommendations" />
+            <ProjectRecommendations username={currentUser.username} />
+          </ColumnContainer>
         </RowContainer>
       </>;
     } else {

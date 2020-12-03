@@ -4,14 +4,19 @@ import React from "react";
 import { requestToJoinProject } from "../api";
 import { ApplyButton, CompatibilityBar, StyledLink } from "./commonComponents";
 import { CompatibilityDialog } from "./CompatibilityDialog";
+import moment from 'moment';
 
+export enum FeedType {
+  Feed, Recommendations
+}
 type RecommendationsTableProps = {
   projectScores: ProjectScore[];
   username: string;
   tableWidth?: string;
+  tableType?: FeedType;
 }
 export const ProjectRecommendationsTable = (props: RecommendationsTableProps) => {
-  const { username, tableWidth } = props;
+  const { username, tableWidth, tableType } = props;
   const [loadedProjectScores, setLoadedProjectScores] = React.useState<ProjectScore[]>(props.projectScores);
   const [isSnackbarOpen, setIsSnackbarOpen] = React.useState<boolean>(false);
   const [isRequestSuccessful, setIsRequestSuccessful] = React.useState<boolean>(false);
@@ -60,7 +65,7 @@ export const ProjectRecommendationsTable = (props: RecommendationsTableProps) =>
       <TableContainer style={{ width: tableWidth ? tableWidth : "auto"}} component={Paper}>
         <TableHead>
           <TableRow>
-            {["Name", "Compatibility", "Details", "Options"].map(header => {
+            {["Name", "Compatibility", "Details", tableType === FeedType.Feed ? "Timestamp" : "Options"].map(header => {
               return (
                 <TableCell key={header} align="right">{header}</TableCell>
               );
@@ -85,11 +90,16 @@ export const ProjectRecommendationsTable = (props: RecommendationsTableProps) =>
                   />
                 </TableCell>
                 <TableCell align="right">
-                  <ApplyButton
-                    disabled={projectScore.project.requests.includes(username)}
-                    name={projectScore.project.requests.includes(username) ? "Request sent" : "Request to join"}
-                    onApply={() => sendJoinRequest(projectScore)}
-                  />
+                  {tableType === FeedType.Feed &&
+                    moment(projectScore.project.startDate).fromNow()
+                  }
+                  {tableType !== FeedType.Feed &&
+                    <ApplyButton
+                      disabled={projectScore.project.requests.includes(username)}
+                      name={projectScore.project.requests.includes(username) ? "Request sent" : "Request to join"}
+                      onApply={() => sendJoinRequest(projectScore)}
+                    />
+                  }
                 </TableCell>
               </TableRow>
             )

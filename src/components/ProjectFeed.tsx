@@ -1,7 +1,7 @@
 import React from "react";
 import { getMostRecentProjects } from "../api";
 import { LoadingIndicator } from './commonComponents';
-import { ProjectRecommendationsTable } from "./ProjectRecommendationsTable";
+import { FeedType, ProjectRecommendationsTable } from "./ProjectRecommendationsTable";
 
 type Props = {
   username: string;
@@ -23,5 +23,5 @@ export const ProjectFeed = ({ username, tableWidth }: Props) => {
   if (isLoading) {
     return <LoadingIndicator />;
   }
-  return <ProjectRecommendationsTable projectScores={newestProjects} username={username} tableWidth={tableWidth} />
+  return <ProjectRecommendationsTable projectScores={newestProjects} username={username} tableWidth={tableWidth} tableType={FeedType.Feed} />
 }
