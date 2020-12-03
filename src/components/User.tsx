@@ -262,7 +262,7 @@ export const User = (props: ComponentProps) => {
 
   return (
     <>
-      {loadedUser &&
+      {loadedUser && authenticationManager.getIsLoggedIn() &&
         <InviteToProjectDialog
           open={isDialogOpen}
           onClose={() => setIsDialogOpen(false)}
