@@ -2,11 +2,12 @@ import React from "react";
 import styled from "styled-components";
 import { getProjectsByNames, getUser, registerInProject, rejectInvite, voteForSkill } from "../api";
 import { RouteComponentProps } from 'react-router-dom'
-import { PageHeader, Attribute, PageContainer, LoadingIndicator, Panel, AttributeList, WeightedSkillList, UserAvatar, SearchResultsTable } from "./commonComponents";
+import { PageHeader, Attribute, PageContainer, LoadingIndicator, Panel, AttributeList, WeightedSkillList, UserAvatar, SearchResultsTable, ApplyButton } from "./commonComponents";
 import { PositionIcon } from "./icons";
 import { Paper } from "@material-ui/core";
 import { ProjectRecommendations } from "./ProjectRecommendations";
 import { authenticationManager } from "../authenticationManager";
+import { InviteToProjectDialog } from "./InviteToProjectDialog";
 
 const UserContainer = styled.div`
   display: flex;
@@ -68,6 +69,7 @@ export const User = (props: ComponentProps) => {
   const [loadedProjects, setLoadedProjects] = React.useState<IProject[]>([]);
   const [loadedInvites, setLoadedInvites] = React.useState<IProject[]>([]);
   const [loadedRequests, setLoadedRequests] = React.useState<IProject[]>([]);
+  const [isDialogOpen, setIsDialogOpen] = React.useState<boolean>(false);
 
   React.useEffect(() => {
     const fetchUser = async () => {
@@ -161,6 +163,12 @@ export const User = (props: ComponentProps) => {
           </StyledPaper>
           <UserAvatar name={loadedUser.name} />
         </IntroContainer>
+        {authenticationManager.getIsLoggedIn() && authenticationManager.getLoggedInUser() !== loadedUser.username &&
+          <ApplyButton
+            name="Invite to a project"
+            onApply={() => setIsDialogOpen(true)}
+          />
+        }
         <DetailedInfoContainer>
           <Panel>
             <AttributeList title="Basic Information">
@@ -253,8 +261,18 @@ export const User = (props: ComponentProps) => {
   }
 
   return (
-    <PageContainer>
-      {getContent()}
-    </PageContainer>
+    <>
+      {loadedUser &&
+        <InviteToProjectDialog
+          open={isDialogOpen}
+          onClose={() => setIsDialogOpen(false)}
+          creator={authenticationManager.getLoggedInUser()}
+          username={username}
+        />
+      }
+      <PageContainer>
+        {getContent()}
+      </PageContainer>
+    </>
   );
 };
