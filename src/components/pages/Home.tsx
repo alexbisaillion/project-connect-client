@@ -22,9 +22,6 @@ const RowContainer = styled.div`
   flex-direction: row;
   justify-content: space-around;
   width: 100%;
-  && > *{
-    width: 40%;
-  }
 `;
 
 type ColumnContainerProps = {
@@ -75,11 +72,11 @@ export const Home = () => {
         <RowContainer>
           <ColumnContainer columnWidth="45%">
             <PageHeader size="h5" textContent="Latest Projects" />
-            <ProjectFeed username={currentUser.username} />
+            <ProjectFeed username={currentUser.username} tableWidth="100%" />
           </ColumnContainer>
           <ColumnContainer columnWidth="45%">
             <PageHeader size="h5" textContent="Your Recommendations" />
-            <ProjectRecommendations username={currentUser.username} />
+            <ProjectRecommendations username={currentUser.username} tableWidth="100%" />
           </ColumnContainer>
         </RowContainer>
       </>;

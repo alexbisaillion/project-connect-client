@@ -86,6 +86,7 @@ export const Register = () => {
           rowsMax={8}
           value={bio}
           onChange={(e) => setBio(e.target.value)}
+          inputProps={{ spellCheck: false }}
         />
         <Button
           fullWidth

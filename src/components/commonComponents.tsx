@@ -197,6 +197,7 @@ export const TextControl = (props: TextControlProps) => {
       multiline={props.large}
       rows={props.large ? 10 : undefined}
       rowsMax={props.large ? 10 : undefined}
+      inputProps={{ spellCheck: false }}
     />
   )
 }

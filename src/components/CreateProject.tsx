@@ -52,6 +52,12 @@ export const CreateProject = () => {
         <PageHeader textContent="Start a new project" />
         <TextControl name="Project Name" value={projectName} onChange={(newValue: string) => setProjectName(newValue)} />
         <TextControl large name="Description" value={description} onChange={(newValue: string) => setDescription(newValue)} />
+        <SkillList
+          skills={selectedSkills}
+          onDelete={(value: string) => {
+            setSelectedSkills(selectedSkills.filter(selectedSkill => selectedSkill !== value));
+          }}
+        />
         <AttributeDropdown
           name="Basic Skills"
           options={attributeManager.getSkills()}
@@ -60,11 +66,11 @@ export const CreateProject = () => {
               setSelectedSkills([...selectedSkills, newValue]);
             }
           }}
-        />          
+        />
         <SkillList
-          skills={selectedSkills}
+          skills={selectedProgrammingLanguages}
           onDelete={(value: string) => {
-            setSelectedSkills(selectedSkills.filter(selectedSkill => selectedSkill !== value));
+            setSelectedProgrammingLanguages(selectedProgrammingLanguages.filter(selectedProgrammingLanguage => selectedProgrammingLanguage !== value));
           }}
         />
         <AttributeDropdown
@@ -77,9 +83,9 @@ export const CreateProject = () => {
           }}
         />          
         <SkillList
-          skills={selectedProgrammingLanguages}
+          skills={selectedFrameworks}
           onDelete={(value: string) => {
-            setSelectedProgrammingLanguages(selectedProgrammingLanguages.filter(selectedProgrammingLanguage => selectedProgrammingLanguage !== value));
+            setSelectedFrameworks(selectedFrameworks.filter(selectedFramework => selectedFramework !== value));
           }}
         />
         <AttributeDropdown
@@ -91,12 +97,6 @@ export const CreateProject = () => {
             }
           }}
         />          
-        <SkillList
-          skills={selectedFrameworks}
-          onDelete={(value: string) => {
-            setSelectedFrameworks(selectedFrameworks.filter(selectedFramework => selectedFramework !== value));
-          }}
-        />
         <ApplyButton name="Create Project" onApply={onApply} />
       </>
     );
