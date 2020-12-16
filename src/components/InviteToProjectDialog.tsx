@@ -43,7 +43,7 @@ export const InviteToProjectDialog = (props: InviteToProjectDialogProps) => {
     if (loadedCreator) {
       fetchProjects(loadedCreator.projects);
     }
-  }, [loadedCreator]);
+  }, [loadedCreator, creator]);
 
   const sendInvite = async (projectName: string): Promise<boolean> => {
     if (!loadedUser) {

@@ -1,4 +1,4 @@
-import { Avatar, IconButton, List, ListItem, ListItemAvatar, ListItemSecondaryAction, ListItemText, Snackbar, Typography } from "@material-ui/core";
+import { Avatar, IconButton, List, ListItem, ListItemAvatar, ListItemText, Snackbar, Typography } from "@material-ui/core";
 import React from "react";
 import styled from "styled-components";
 import DeleteIcon from '@material-ui/icons/Delete';
